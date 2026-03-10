@@ -45,6 +45,10 @@
   @apply shadow-md  fixed bg-light-500;
 
 }
+/* 隐藏侧边菜单滚动条 */
+.f-menu::-webkit-scrollbar{
+  width: 0px;
+}
 </style>
 
 <script setup>
