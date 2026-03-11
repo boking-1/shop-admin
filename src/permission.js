@@ -1,4 +1,4 @@
-import router from './router'
+import { addRoutes, router } from './router'
 import { getToken } from './composables/auth'
 import { hideFullLoading, showFullLoading, toast } from './composables/util'
 import store from './store'
@@ -18,16 +18,19 @@ router.beforeEach(async (to, from, next) => {
         toast("请勿重复登陆！", "error")
         return next({ path: from.path })
     }
-
+    let hasNewRoute = false
     //已经登录，自动获取用户信息，并存储到vuex中
     if (token) {
-        await store.dispatch("getinfo")
+        let { menus } = await store.dispatch("getinfo")
+        //动态添加路由
+        hasNewRoute = addRoutes(menus)
+        // console.log(res.menus)
 
     }
     //设置标题
-    let title=(to.meta.title?to.meta.title:"")+"-商城后台"
-    document.title=title
-    next()
+    let title = (to.meta.title ? to.meta.title : "") + "-商城后台"
+    document.title = title
+    hasNewRoute ? next(to.fullPath) : next()
 })
 
 //全局后置钩子

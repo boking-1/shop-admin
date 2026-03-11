@@ -10,7 +10,7 @@
 import { showModal } from '~/composables/util';
 import { logout } from '~/api/manager';
 import { ElMessage } from 'element-plus'
-import router from '~/router';
+import {router} from '~/router';
 import { useStore } from 'vuex';
 
 const store = useStore()
