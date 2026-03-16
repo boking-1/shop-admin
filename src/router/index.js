@@ -62,6 +62,7 @@ const asyncRoute = [
     }
   }
 ]
+
 //动态添加路由的方法
 export function addRoutes(menus) {
   //是否有新的路由
@@ -79,8 +80,6 @@ export function addRoutes(menus) {
     })
   }
   findAndAddRoutesByMenus(menus)
-  console.log(router.getRoutes());
-  
   return hasNewRoute
 }
 

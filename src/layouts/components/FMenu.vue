@@ -61,7 +61,6 @@ const store=useStore()
 const defaultActive=ref(route.path)
 const asideMenu = store.state.menus
 function handleSelect(e){
-  console.log(e);
   router.push(e)
 }
 </script>
