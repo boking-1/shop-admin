@@ -1,5 +1,5 @@
 <template>
-  <div class="f-menu" :width="$store.state.asideWidth">
+  <div class="f-menu" :width="$store.state.asideWidth" :class="{ 'is-collapsed': $store.state.isCollapse }">
     <el-menu class="border-0 " @select="handleSelect" :collapse="$store.state.isCollapse" unique-opened :default-active="defaultActive">
       <template v-for="(item, index) in asideMenu" :key="index">
         <!-- 二级菜单 -->
@@ -41,9 +41,12 @@
   left: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* transition: all 0.3s; */
-  @apply shadow-md  fixed bg-light-500;
+  transition: all 0.6s;
+  @apply shadow-md  fixed;
 
+}
+.f-menu.is-collapsed{
+  box-shadow: none;
 }
 /* 隐藏侧边菜单滚动条 */
 .f-menu::-webkit-scrollbar{

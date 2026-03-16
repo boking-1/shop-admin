@@ -41,14 +41,18 @@ const {
 </script>
 <style scoped>
 .f-tag-list {
-    @apply bg-gray-200 flex fixed items-center;
+    @apply  flex fixed items-center;
     top: 64px;
     left: 250px;
     right: 0;
     height: 44px;
     z-index: 100;
+    transition: all 0.3s;
 }
-
+:deep(.el-tabs--card>.el-tabs__header){
+    border-bottom: 0 !important;
+    
+}
 .tag-btn {
     @apply bg-white rounded ml-auto mr-3;
     height: 32px;

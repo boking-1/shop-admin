@@ -1,44 +1,40 @@
 <template>
    <div>
-      首页
-      {{ $store.state.user.username}}
-      <el-button plain @click="handleLogout">退出登录</el-button>
-   
-   </div> 
+      <el-row :gutter="20">
+         <el-col :span="6" :offset="0" v-for="(item, index) in panels">
+            <el-card shadow="hover" class="border-0">
+               <template #header>
+                  <div class="flex justify-between">
+                     <span class="text-sm">{{ item.title }}</span>
+                     <el-tag :type="item.unitColor || 'primary'" effect="plain">
+                        {{ item.unit }}
+                     </el-tag>
+                  </div>
+
+               </template>
+               <span class="text-3xl font-bold text-gray-500">
+                  {{ item.value }}
+               </span>
+               <el-divider />
+               <div class="flex justify-center text-sm text-gray-500">
+                  {{ item.subTitle }}
+                  {{ item.subValue }}
+               </div>
+            </el-card>
+
+         </el-col>
+      </el-row>
+
+
+   </div>
 </template>
 <script setup>
-import { showModal } from '~/composables/util';
-import { logout } from '~/api/manager';
-import { ElMessage } from 'element-plus'
-import {router} from '~/router';
-import { useStore } from 'vuex';
+import { getStatistics1 } from '~/api/index.js';
+import { ref } from 'vue'
+const panels = ref([])
+getStatistics1()
+   .then(res => {
+      panels.value = res.panels
 
-const store = useStore()
-
-function handleLogout() {
-   showModal("是否退出登录")
-      .then(() => {
-         logout()
-
-            .finally(() => {
-               //
-               store.dispatch("logout")
-               //提示退出登录成功
-               ElMessage({
-                  type: 'success',
-                  message: '成功退出登录',
-               })
-               //跳转login页
-               router.push('/login')
-            })
-      })
-      .catch(() => {
-         ElMessage({
-            type: 'info',
-            message: '取消退出登录',
-         })
-      })
-}
-
-
+   })
 </script>
