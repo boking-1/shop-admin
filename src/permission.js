@@ -4,6 +4,8 @@ import { hideFullLoading, showFullLoading, toast } from './composables/util'
 import store from './store'
 
 //全局前置守卫
+
+let hasGetInfo=false//是否已经请求getinfo，防止重复请求
 router.beforeEach(async (to, from, next) => {
     showFullLoading()
     const token = getToken()
@@ -18,14 +20,15 @@ router.beforeEach(async (to, from, next) => {
         toast("请勿重复登陆！", "error")
         return next({ path: from.path })
     }
+    //如果已经登录，自动获取用户信息，并存储到vuex中
     let hasNewRoute = false
-    //已经登录，自动获取用户信息，并存储到vuex中
-    if (token) {
+
+    if (token&&!hasGetInfo) {
         let { menus } = await store.dispatch("getinfo")
         //动态添加路由
         hasNewRoute = addRoutes(menus)
         // console.log(res.menus)
-
+        hasGetInfo=true
     }
     //设置标题
     let title = (to.meta.title ? to.meta.title : "") + "-商城后台"
