@@ -26,10 +26,7 @@
                </el-skeleton>
             </el-col>
          </template>
-
-
-
-
+         <!-- 首页大卡片 -->
          <el-col :span="6" :offset="0" v-for="(item, index) in panels">
             <el-card shadow="hover" class="border-0">
                <template #header>
@@ -51,13 +48,17 @@
                </div>
             </el-card>
          </el-col>
+
       </el-row>
+      <indexNavs></indexNavs>
    </div>
 </template>
 <script setup>
 import { getStatistics1 } from '~/api/index.js';
 import { ref } from 'vue'
 import CountTo from '~/components/CountTo.vue';
+import indexNavs from '~/components/indexNavs.vue';
+
 const panels = ref([])
 getStatistics1()
    .then(res => {
