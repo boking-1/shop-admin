@@ -6,7 +6,7 @@
             <el-main>
                 <f-tag-list></f-tag-list>
                 <router-view v-slot="{ Component }">
-                    <transition name="fade" appear enter-active-class="animate__backInLeft"
+                    <transition name="fade"  enter-active-class="animate__backInLeft"
                         leave-active-class="animate__backOutRight">
                         <keep-alive :max="10">
                             <component :is="Component"></component>
