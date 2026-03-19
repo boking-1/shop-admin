@@ -41,12 +41,12 @@ const {
 </script>
 <style scoped>
 .f-tag-list {
-    @apply  flex fixed items-center;
+    @apply  flex fixed items-center bg-gray-200;
     top: 64px;
     left: 250px;
     right: 0;
     height: 44px;
-    z-index: 100;
+    z-index: 1000;
     transition: all 0.3s;
 }
 :deep(.el-tabs--card>.el-tabs__header){

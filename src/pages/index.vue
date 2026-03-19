@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <div class="">
       <el-row :gutter="20">
          <!-- 骨架屏 -->
          <template v-if="panels.length == 0">
@@ -50,7 +50,16 @@
          </el-col>
 
       </el-row>
-      <indexNavs></indexNavs>
+      <indexNavs />
+      <el-row :gutter="20">
+         <el-col :span="12" :offset="0">
+            <indexChart />
+         </el-col>
+         <el-col :span="12" :offset="0">
+
+         </el-col>
+      </el-row>
+
    </div>
 </template>
 <script setup>
@@ -58,7 +67,7 @@ import { getStatistics1 } from '~/api/index.js';
 import { ref } from 'vue'
 import CountTo from '~/components/CountTo.vue';
 import indexNavs from '~/components/indexNavs.vue';
-
+import indexChart from '~/components/indexChart.vue'
 const panels = ref([])
 getStatistics1()
    .then(res => {

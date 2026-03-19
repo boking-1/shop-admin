@@ -1,5 +1,5 @@
 <template>
-    <el-row :gutter="24" class="mt-5" >
+    <el-row :gutter="24" class="mt-5 mb-5" >
         <el-col :span="3" :offset="0" v-for="(item,index) in iconNavs" :key="index">
             <el-card shadow="hover" @click="$router.push(item.path)">
                 <div class="flex flex-col justify-center items-center cursor-pointer">

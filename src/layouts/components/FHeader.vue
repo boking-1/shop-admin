@@ -1,6 +1,6 @@
 <template>
 
-    <div class="f-header">
+    <div class="f-header" style="z-index: 1000;">
         <!-- 左 -->
 
         <span class="logo">
