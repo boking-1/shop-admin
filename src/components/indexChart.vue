@@ -9,7 +9,7 @@
                 </div>
             </div>
         </template>
-        <div id="chart" style="width:100%; height: 300px;"></div>
+        <div ref="el" id="chart" style="width:100%; height: 300px;"></div>
     </el-card>
 
 
@@ -18,6 +18,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as echarts from 'echarts';
 import { getStatistics3 } from '~/api/index.js';
+import { useResizeObserver } from '@vueuse/core'
 const current = ref("week")
 const options = [
     {
@@ -74,5 +75,6 @@ function getData() {
     }).finally(() => myChart.hideLoading())
 
 }
-
+const el=ref(null)
+useResizeObserver(el, (entries) => myChart.resize())
 </script>
