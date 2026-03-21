@@ -43,8 +43,10 @@ var myChart = null
 //界面被挂载后，获取统计图实例
 onMounted(() => {
     var chartDom = document.getElementById('chart');
-    myChart = echarts.init(chartDom);
-    getData()
+    if (chartDom) {
+        myChart = echarts.init(chartDom);
+        getData()
+    }
 })
 // 被卸载前销毁实例
 onBeforeUnmount(() => {
@@ -73,8 +75,11 @@ function getData() {
         option.series[0].data = res.y
         myChart.setOption(option);
     }).finally(() => myChart.hideLoading())
-
 }
-const el=ref(null)
-useResizeObserver(el, (entries) => myChart.resize())
+const el = ref(null)
+useResizeObserver(el, (entries) => {
+    if (myChart) {
+        myChart.resize()
+    }
+})
 </script>

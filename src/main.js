@@ -8,10 +8,11 @@ import store from './store'
 import 'virtual:windi.css'
 
 const app = createApp(App)
-
+import permission from '~/directives/permission.js'
 app.use(store)
 app.use(ElementPlus)
 app.use(router)
+app.use(permission)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }

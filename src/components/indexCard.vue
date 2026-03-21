@@ -24,10 +24,15 @@
 
 </template>
 <script setup>
+import { type } from 'windicss/utils';
+
 defineProps({
     title: String,
     tip: String,
-    btns:[]
+    btns:{
+        type:Array,
+        default: () => []
+    }
 })
 
 </script>
