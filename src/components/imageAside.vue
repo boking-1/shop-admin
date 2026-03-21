@@ -2,15 +2,18 @@
 
     <el-aside width="220px" class="image-aside">
         <div class="top">
-            <div v-for="i in 100" :key="i">
-                {{ i }}
-            </div>
+            <aside-list active>
+                分类标题
+            </aside-list>   
+            <aside-list>
+                分类标题
+            </aside-list>
         </div>
 
         <div class="bottom">
             分页区域
         </div>
-    </el-aside>
+    </el-aside>             
 </template>
 
 <style>
@@ -18,8 +21,6 @@
     border-right: 1px solid #eeeeee;
     position: relative;
 }
-
-
 
 .image-aside .top {
     position: absolute;
@@ -39,3 +40,7 @@
     height: 50px;
 }
 </style>
+<script setup>
+import AsideList from './AsideList.vue';
+
+</script>

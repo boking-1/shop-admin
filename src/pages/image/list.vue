@@ -3,8 +3,8 @@
         <el-container class="bg-white rounded" :style="{ height: (h + 'px') }">
             <el-header class="image-header">Header</el-header>
             <el-container>
-                <imageAside/>
-                <imageMain/>
+                <image-aside/>
+                <image-main/>
             </el-container>
         </el-container>
     </div>

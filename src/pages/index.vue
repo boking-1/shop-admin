@@ -50,14 +50,14 @@
          </el-col>
 
       </el-row>
-      <indexNavs />
+      <index-navs />
       <el-row :gutter="20">
          <el-col :span="12" :offset="0">
-            <indexChart v-permission="['getStatistics3,GET']"/>
+            <index-chart v-permission="['getStatistics3,GET']"/>
          </el-col>
          <el-col :span="12" :offset="0">
-            <indexCard title="店铺及商品提示" tip="店铺及商品提示" :btns="goods" class="mb-4"/>
-            <indexCard title="交易提示" tip="需要立即处理的交易订单" :btns="order" />
+            <index-card title="店铺及商品提示" tip="店铺及商品提示" :btns="goods" class="mb-4"/>
+            <index-card title="交易提示" tip="需要立即处理的交易订单" :btns="order" />
          </el-col>
       </el-row>
 
