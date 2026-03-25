@@ -13,6 +13,10 @@ export function updateImageClassList(id, data) {
 }
 
 
-export function deleteImageClassList(id, data) {
-    return axios.post('admin/image_class/' + id+'/delete')
+export function deleteImageClassList(id) {
+    return axios.post('admin/image_class/' + id + '/delete')
+}
+
+export function getImageList(id, page = 1) {
+    return axios.get(`admin/image_class/${id}/image/${page}`)
 }

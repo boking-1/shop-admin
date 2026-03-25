@@ -3,7 +3,7 @@
     <el-aside width="220px" class="image-aside" v-loading="loading">
         <div class="top">
             <aside-list v-for="(item, index) in list" :key="index" :active="activeId == item.id"
-                @edit="handleEdit(item)" @delete="handleDelete(item)">
+                @edit="handleEdit(item)" @delete="handleDelete(item)" @click="handleSelect(item.id)">
                 {{ item.name }}
             </aside-list>
 
@@ -14,6 +14,7 @@
                 @current-change="getData" />
         </div>
     </el-aside>
+
     <form-drawer ref="formDrawerRef" @submit="handleSubmit" :title="drawerTitle">
         <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
             <el-form-item label="分类名称" prop="name">
@@ -28,30 +29,7 @@
 
 </template>
 
-<style>
-.image-aside {
-    border-right: 1px solid #eeeeee;
-    position: relative;
-}
 
-.image-aside .top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 50px;
-    overflow-y: auto;
-}
-
-.image-aside .bottom {
-    @apply flex items-center justify-center;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 50px;
-}
-</style>
 <script setup>
 import {
     getImageClassList,
@@ -72,7 +50,14 @@ const activeId = ref(0)
 const limit = ref(10)
 const formDrawerRef = ref(null)
 const formRef = ref(null)
+const currentId = ref(0)
 
+const emit = defineEmits(["select"])
+const handleSelect = (id) => {
+    currentId.value = id
+    activeId.value = id
+    emit("select", id)
+}
 const form = reactive({
     name: '',
     order: 50
@@ -102,8 +87,8 @@ function getData(p = null) {
             list.value = res.list
             if (list.value[0]) {
                 activeId.value = list.value[0].id
+                handleSelect(activeId.value)
             }
-
         })
         .finally(() => loading.value = false)
 }
@@ -147,13 +132,13 @@ const handleSubmit = () => {
 
 //删除分类
 const handleDelete = (e) => {
-    loading.value=true
+    loading.value = true
     deleteImageClassList(e.id)
-    .then(res=>{
-        toast("删除成功")
-        getData()
-    })
-    .finally(()=>loading.value=false)
+        .then(res => {
+            toast("删除成功")
+            getData()
+        })
+        .finally(() => loading.value = false)
 }
 
 defineExpose({
@@ -161,3 +146,28 @@ defineExpose({
 })
 
 </script>
+
+<style>
+.image-aside {
+    border-right: 1px solid #eeeeee;
+    position: relative;
+}
+
+.image-aside .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    overflow-y: auto;
+}
+
+.image-aside .bottom {
+    @apply flex items-center justify-center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+}
+</style>
