@@ -99,13 +99,13 @@ getData()
 
 const editId = ref(0)
 const drawerTitle = computed(() => editId.value ? "修改" : "新增")
+
 //新增分类
 const handleCreate = () => {
     editId.value = 0
     form.name = ""
     form.order = 50
     formDrawerRef.value.open()
-
 }
 //修改分类
 const handleEdit = (e) => {
