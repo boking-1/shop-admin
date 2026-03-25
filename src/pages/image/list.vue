@@ -31,7 +31,6 @@ const imageAsideRef = ref(null)
 const imageMainRef=ref(null)
 
 const handleAsideSelect=(image_class_id)=>{
-    console.log(image_class_id);
     imageMainRef.value.loadingData(image_class_id)
 }
 

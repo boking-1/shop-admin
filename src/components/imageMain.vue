@@ -4,11 +4,23 @@
             <el-row :gutter="10">
                 <el-col :span="6" :offset="0" v-for="(item, index) in list" :key="index">
                     <el-card shadow="hover" :body-style="{ padding: '0' }" class="relative mb-3">
-                        <el-image :src="item.url" fit="cover" class="w-full h-[150px]"></el-image>
+                        <el-image :src="item.url" fit="cover" class="w-full h-[150px]" :preview-src-list="[item.url]"
+                            :initial-index="0">
+
+                        </el-image>
                         <div class="image-title">{{ item.name }}</div>
                         <div class="flex items-center justify-center p-2">
-                            <el-button type="primary" size="small" text>重命名</el-button>
-                            <el-button type="primary" size="small" text>删除</el-button>
+                            <el-button type="primary" size="small" text @click="handleEdit(item)">重命名</el-button>
+
+
+                            <el-popconfirm title="是否要删除此图片?" confirm-button-text="确认" cancel-button-text="取消"
+                                @confirm="handleDelete(item.id)">
+                                <template #reference>
+                                    <el-button type="primary" size="small" text>删除</el-button>
+                                </template>
+                            </el-popconfirm>
+
+
                         </div>
                     </el-card>
                 </el-col>
@@ -25,7 +37,12 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { getImageList } from '~/api/image_class'
+import {
+    getImageList,
+    updateImage,
+    deleteImage
+} from '~/api/image.js'
+import { showPrompt, toast } from '~/composables/util.js'
 
 const currentPage = ref(1)
 const total = ref(0)
@@ -53,6 +70,33 @@ const loadingData = (id) => {
     image_class_id.value = id
     getData()
 }
+
+//重命名
+const handleEdit = (item) => {
+    showPrompt("重命名", item.name)
+        .then(res => {
+            loading.value = true
+            updateImage(item.id, res.value)
+                .then(res => {
+                    toast("修改成功")
+                    getData()
+                })
+                .finally(() => loading.value = false)
+        })
+}
+
+//删除
+const handleDelete=(id)=>{
+    loading.value=true
+    deleteImage([id])
+    .then(res=>{
+        toast("删除成功")
+        getData()
+    })
+    .finally(()=>loading.value=false)
+}
+
+
 
 defineExpose({
     loadingData,
@@ -82,7 +126,8 @@ defineExpose({
     right: 0;
     height: 50px;
 }
-.image-title{
+
+.image-title {
     position: absolute;
     top: 122px;
     left: -1px;
