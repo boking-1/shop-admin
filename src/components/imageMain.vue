@@ -45,12 +45,16 @@ import {
 import { showPrompt, toast } from '~/composables/util.js'
 import UploadFiled from './UpLoadFile.vue'
 
+const loading = ref(false)
+
+//分页
 const currentPage = ref(1)
 const total = ref(0)
 const limit = ref(10)
+
 const image_class_id = ref(0)
 const list = ref([])
-const loading = ref(false)
+
 const drawer = ref(false)
 
 //打开抽屉
