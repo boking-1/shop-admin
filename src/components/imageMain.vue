@@ -43,7 +43,7 @@ import {
     deleteImage
 } from '~/api/image.js'
 import { showPrompt, toast } from '~/composables/util.js'
-import UploadFiled from './UploadFile.vue'
+import UploadFiled from './UpLoadFile.vue'
 
 const currentPage = ref(1)
 const total = ref(0)

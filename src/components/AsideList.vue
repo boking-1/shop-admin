@@ -9,7 +9,8 @@
             </el-icon>
         </el-button>
 
-        <el-popconfirm title="是否要删除此类?" confirm-button-text="确认" cancel-button-text="取消" @confirm="$emit('delete')">
+        <span @click.stop="()=>{}">
+            <el-popconfirm title="是否要删除此类?" confirm-button-text="确认" cancel-button-text="取消" @confirm="$emit('delete')">
             <template #reference>
                 <el-button text size="small" type="primary" >
                     <el-icon :size="12">
@@ -18,6 +19,7 @@
                 </el-button>
             </template>
         </el-popconfirm>
+        </span>
 
 
     </div>
