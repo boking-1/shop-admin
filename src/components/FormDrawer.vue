@@ -30,14 +30,6 @@ const showLoading = ()=>loading.value=true
 //取消loading
 const hideLoading = ()=>loading.value=false
 
-
-//向父组件暴露以下方法
-defineExpose({
-    open,
-    close,
-    showLoading,
-    hideLoading
-})
 //属性
 const props = defineProps({
     title: String,
@@ -59,6 +51,14 @@ const emit=defineEmits(["submit"])
 
 const submit=()=>emit("submit")
 
+
+//向父组件暴露以下方法
+defineExpose({
+    open,
+    close,
+    showLoading,
+    hideLoading
+})
 </script>
 
 <style>

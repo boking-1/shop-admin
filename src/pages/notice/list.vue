@@ -3,7 +3,7 @@
         <el-card shadow="never" :body-style="{ padding: '20px' }">
             <div class="flex items-center justify-between mb-4">
 
-                <el-button type="primary" size="small" @click="">新增</el-button>
+                <el-button type="primary" size="small" @click="handleOpen">新增</el-button>
 
                 <el-tooltip content="刷新数据" placement="top" effect="dark">
                     <el-button text @click="getData()">
@@ -29,18 +29,33 @@
                     </template>
                 </el-table-column>
             </el-table>
+
         </el-card>
         <!-- 分页 -->
         <div class=" flex items-center justify-center mt-3 ">
             <el-pagination background layout="prev, pager,next" :total="total" :current-page="currentPage"
                 :page-size="limit" @current-change="getData" />
         </div>
+        <!-- 抽屉 -->
+        <FormDrawer title="新增公告" ref="formDrawerRef" @submit="handleCreate">
+
+            <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
+                <el-form-item label="公告标题" prop="title">
+                    <el-input v-model="form.title" placeholder="公告标题"></el-input>
+                </el-form-item>
+                <el-form-item label="公告内容" prop="content">
+                    <el-input v-model="form.content" placeholder="公告内容" type="textarea" :rows="5"></el-input>
+                </el-form-item>
+            </el-form>
+        </FormDrawer>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { getNoticeList } from '~/api/notice'
+import { toast } from '~/composables/util'
+import { ref, reactive } from 'vue'
+import { getNoticeList, createNotice } from '~/api/notice'
+import FormDrawer from '~/components/FormDrawer.vue'
 const tableData = ref([])
 
 //加载动画
@@ -49,6 +64,56 @@ const loading = ref(false)
 const currentPage = ref(1)
 const total = ref(0)
 const limit = ref(10)
+
+//抽屉组件
+const formDrawerRef = ref(null)
+const handleOpen = () => {
+    formDrawerRef.value.open()
+}
+
+//表单
+const formRef = ref(null)
+const form = reactive({
+    title: "",
+    content: ""
+})
+//表单验证规则
+const rules = {
+    title: [
+        {
+            required: true,
+            message: '公告标题不能为空',
+            trigger: 'blur'
+        },
+    ],
+    content: [
+        {
+            required: true,
+            message: '公告内容不能为空',
+            trigger: 'blur'
+        },
+    ],
+}
+
+//新增公告
+const handleCreate = () => {
+    formRef.value.validate(valid => {
+        if (!valid) return
+        formDrawerRef.value.showLoading()
+        createNotice(form)
+            .then(res => {
+                toast("新增成功")
+                getData(1)
+                formDrawerRef.value.close()
+
+            })
+            .finally(() => {
+                formDrawerRef.value.hideLoading()
+            })
+
+    })
+
+}
 
 //获取数据
 const getData = (p = null) => {
