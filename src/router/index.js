@@ -14,6 +14,7 @@ import ImageList from '~/pages/image/list.vue'
 import NoticeList from '~/pages/notice/list.vue'
 import SettingBase from '~/pages/setting/base.vue'
 import CouponList from '~/pages/coupon/list.vue'
+import ManagerList from '~/pages/manager/list.vue'
 
 //默认路由
 const routes = [
@@ -84,7 +85,7 @@ const asyncRoute = [
       title: "订单列表"
     }
   },
-   {
+  {
     path: '/comment/list',
     name: '/comment/list',
     component: CommentList,
@@ -122,6 +123,15 @@ const asyncRoute = [
     component: CouponList,
     meta: {
       title: "优惠卷列表"
+    }
+  },
+  {
+    path: '/manager/list',
+    name: '/manager/list',
+    component: ManagerList
+    ,
+    meta: {
+      title: "管理员管理"
     }
   },
 ]

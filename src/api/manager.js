@@ -19,3 +19,5 @@ export function logout(){
 export function rePassword(data){
     return axios.post("admin/updatepassword",data)
 }
+
+
