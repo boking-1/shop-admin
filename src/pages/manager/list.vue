@@ -1,10 +1,28 @@
 <template>
     <div>
         <el-card shadow="never" :body-style="{ padding: '20px' }">
+            <!-- 搜索 -->
+            <el-form :model="searchForm" label-width="80px" :inline="false" size="default">
+                <el-row :gutter="20">
+                    <el-col :span="8" :offset="0">
+                        <el-form-item label="关键词">
+                            <el-input v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="8" :offset="8">
+                        <div class="flex items-center justify-center">
+                            <el-button type="primary" @click="getData">搜索</el-button>
+                            <el-button @click="resetSearchForm">重置</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-form>
+
+
+            <!-- 新增|刷新 -->
             <div class="flex items-center justify-between mb-4">
-
                 <el-button type="primary" size="small" @click="handleCreate">新增</el-button>
-
                 <el-tooltip content="刷新数据" placement="top" effect="dark">
                     <el-button text @click="getData()">
                         <el-icon size="20">
@@ -13,12 +31,12 @@
                     </el-button>
                 </el-tooltip>
             </div>
-            <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
 
+            <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
                 <el-table-column label="管理员">
                     <template #default="{ row }">
                         <div class="flex items-center">
-                            <el-avatar icon="el-icon-user-solid" size="40" shape="circle" :src="row.avatar" fit="fill">
+                            <el-avatar icon="el-icon-user-solid" :size="40" shape="circle" :src="row.avatar" fit="fill">
                             </el-avatar>
                             <div class="ml-3">
                                 <h6>{{ row.username }}</h6>
@@ -84,7 +102,14 @@ import { ref, reactive, computed } from 'vue'
 import { getNoticeList, createNotice, updateNotice, deleteNotice } from '~/api/notice'
 import { getManagerList } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
-
+//搜索
+const searchForm = reactive({
+    keyword: ""
+})
+const resetSearchForm = () => {
+    searchForm.keyword = ""
+    getData()
+}
 //公告列表数据
 const tableData = ref([])
 //加载动画
@@ -185,10 +210,7 @@ const getData = (p = null) => {
         currentPage.value = p
     }
     loading.value = true
-    getManagerList(currentPage.value, {
-        limit: 10,
-        keyword: "ceshi"
-    })
+    getManagerList(currentPage.value, searchForm)
         .then((res) => {
             tableData.value = res.list
             total.value = res.totalCount
