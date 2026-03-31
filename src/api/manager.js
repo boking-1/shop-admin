@@ -30,8 +30,9 @@ export function getManagerList(page, query = {}) {
     }
     let r=q.join("&")
     r= r? ("?"+r):""
-
     return axios.get(`admin/manager/${page}${r}`)
 }
 
-
+export function updateManagerStatus(id,status) {
+    return axios.post(`admin/manager/${id}/update_status`,{status})
+}

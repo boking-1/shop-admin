@@ -33,6 +33,7 @@
             </div>
 
             <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
+
                 <el-table-column label="管理员">
                     <template #default="{ row }">
                         <div class="flex items-center">
@@ -49,27 +50,29 @@
                 <el-table-column label="所属管理员">
                     <template #default="{ row }">
                         {{ row.role?.name || "-" }}
-
                     </template>
-
                 </el-table-column>
 
                 <el-table-column label="状态" width="120">
                     <template #default="{ row }">
-                        <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0" @change="">
+                        <el-switch :loading="row.statusLoading" :modelValue="row.status" :active-value="1"
+                            :inactive-value="0" @change="handleStatusChange($event, row)" :disabled="row.super == 1">
                         </el-switch>
                     </template>
                 </el-table-column>
 
                 <el-table-column label="操作" width="180" align="center">
                     <template #default="scope">
-                        <el-button type="primary" size="small" text @click="handleUpdate(scope.row)">修改</el-button>
-                        <el-popconfirm title="是否要删除此该管理员?" confirm-button-text="确认" cancel-button-text="取消"
-                            @confirm="handleDelete(scope.row.id)">
-                            <template #reference>
-                                <el-button type="primary" size="small" text>删除</el-button>
-                            </template>
-                        </el-popconfirm>
+                        <small class="text-sm text-gray-500" v-if="scope.row.super == 1">暂无操作</small>
+                        <div v-else>
+                            <el-button type="primary" size="small" text @click="handleUpdate(scope.row)">修改</el-button>
+                            <el-popconfirm title="是否要删除此该管理员?" confirm-button-text="确认" cancel-button-text="取消"
+                                @confirm="handleDelete(scope.row.id)">
+                                <template #reference>
+                                    <el-button type="primary" size="small" text>删除</el-button>
+                                </template>
+                            </el-popconfirm>
+                        </div>
                     </template>
                 </el-table-column>
 
@@ -100,7 +103,7 @@
 import { toast } from '~/composables/util'
 import { ref, reactive, computed } from 'vue'
 import { getNoticeList, createNotice, updateNotice, deleteNotice } from '~/api/notice'
-import { getManagerList } from '~/api/manager'
+import { getManagerList, updateManagerStatus } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
 //搜索
 const searchForm = reactive({
@@ -212,13 +215,29 @@ const getData = (p = null) => {
     loading.value = true
     getManagerList(currentPage.value, searchForm)
         .then((res) => {
-            tableData.value = res.list
+            tableData.value = res.list.map(o => {
+                o.statusLoading = false
+                return o
+            })
             total.value = res.totalCount
         })
         .finally(() => loading.value = false)
 }
 getData()
 
+//修改管理员状态
+const handleStatusChange = (status, row) => {
+    row.statusLoading = true
+    updateManagerStatus(row.id, status)
+        .then(res => {
+            toast("修改状态成功")
+            row.status = status
+        })
+        .finally(() => {
+            row.statusLoading = false
+
+        })
+}
 
 
 
