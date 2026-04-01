@@ -3,20 +3,23 @@
         <div class="top p-3">
             <el-row :gutter="10">
                 <el-col :span="6" :offset="0" v-for="(item, index) in list" :key="index">
-                    <el-card shadow="hover" :body-style="{ padding: '0' }" class="relative mb-3">
+                    <el-card shadow="hover" :body-style="{ padding: '0' }" class="relative mb-3"
+                        :class="{ 'border-blue-500' : item.checked}">
                         <el-image :src="item.url" fit="cover" class="w-full h-[150px]" :preview-src-list="[item.url]"
                             :initial-index="0">
                         </el-image>
                         <div class="image-title">{{ item.name }}</div>
                         <div class="flex items-center justify-center p-2">
-                            <el-button type="primary" size="small" text @click="handleEdit(item)">重命名</el-button>
 
+                            <el-checkbox v-if="openChoose" v-model="item.checked" @change="handleChooseChange(item)"></el-checkbox>
+                            <el-button type="primary" size="small" text @click="handleEdit(item)">重命名</el-button>
                             <el-popconfirm title="是否要删除此图片?" confirm-button-text="确认" cancel-button-text="取消"
                                 @confirm="handleDelete(item.id)">
                                 <template #reference>
                                     <el-button type="primary" size="small" text>删除</el-button>
                                 </template>
                             </el-popconfirm>
+
                         </div>
                     </el-card>
                 </el-col>
@@ -30,13 +33,13 @@
     </el-main>
 
     <el-drawer title="上传图片" v-model="drawer">
-        <UploadFiled :data="{image_class_id}" @success="uploadFlieSuccess"/>
+        <UploadFiled :data="{ image_class_id }" @success="uploadFlieSuccess" />
     </el-drawer>
 
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import {
     getImageList,
     updateImage,
@@ -44,6 +47,7 @@ import {
 } from '~/api/image.js'
 import { showPrompt, toast } from '~/composables/util.js'
 import UploadFiled from './UpLoadFile.vue'
+import { type } from 'windicss/utils'
 
 const loading = ref(false)
 
@@ -55,18 +59,34 @@ const limit = ref(10)
 const image_class_id = ref(0)
 const list = ref([])
 
-const drawer = ref(false)
+//选中图片
+const emit=defineEmits(["choose"])
+const checkImage = computed(() => list.value.filter(o => o.checked))
+const handleChooseChange = (item) => {
+    if (item.checked && checkImage.value.length > 1) {
+        item.checked = false
+        return toast('最多只能选中1张', "error")
+    }
+    emit("choose",checkImage.value)
+}
+defineProps({
+    openChoose:{
+        type:Boolean,
+        default:false
+    }
+})
+
 
 //打开抽屉
+const drawer = ref(false)
+
 const openUpLoadFile = () => {
     drawer.value = true
 }
 //上传成功
-const uploadFlieSuccess=()=>{
+const uploadFlieSuccess = () => {
     getData(1)
 }
-
-
 //获取数据
 const getData = (p = null) => {
     if (typeof p == "number") {
@@ -76,7 +96,10 @@ const getData = (p = null) => {
     getImageList(image_class_id.value, currentPage.value)
         .then((res) => {
             total.value = res.totalCount
-            list.value = res.list
+            list.value = res.list.map(o => {
+                o.checked = false
+                return o
+            })
         })
         .finally(() => loading.value = false)
 }
