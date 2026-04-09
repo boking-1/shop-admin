@@ -64,9 +64,12 @@ const {
     currentPage,
     total,
     limit,
-    getData
+    getData,
+    handleDelete,
+
 } = useInitTable({
     getList: getNoticeList,
+    delete:deleteNotice
 })
 
 //新增，修改
@@ -103,17 +106,6 @@ const {
             },
         ],
     }
-
 })
 
-//删除公告
-const handleDelete = (id) => {
-    loading.value = true
-    deleteNotice(id)
-        .then(res => {
-            toast("删除成功")
-            getData()
-        })
-        .finally(() => loading.value = true)
-}
 </script>

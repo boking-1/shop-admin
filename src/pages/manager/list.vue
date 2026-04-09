@@ -114,8 +114,7 @@
 </template>
 
 <script setup>
-import { toast } from '~/composables/util'
-import { ref, reactive, computed } from 'vue'
+import { ref} from 'vue'
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
@@ -130,12 +129,16 @@ const {
     currentPage,
     total,
     limit,
-    getData
+    getData,
+    handleDelete,
+    handleStatusChange
 } = useInitTable({
     searchForm: {
         keyword: ""
     },
     getList: getManagerList,
+    delete:deleteManager,
+    updateStatus:updateManagerStatus,
     onGetListSuccess: (res) => {
         roles.value = res.roles
         tableData.value = res.list.map(o => {
@@ -155,7 +158,7 @@ const {
     handleSubmit,
     handleUpdate
 } = useInitForm({
-    form:{
+    form: {
         username: "",
         password: "",
         role_id: "null",
@@ -163,38 +166,15 @@ const {
         avatar: ""
     },
     getData,
-    update:updateManager,
-    create:createManager,
+    update: updateManager,
+    create: createManager,
 
 })
 
 
 
 
-//删除管理员
-const handleDelete = (id) => {
-    loading.value = true
-    deleteManager(id)
-        .then(res => {
-            toast("删除成功")
-            getData()
-        })
-        .finally(() => loading.value = true)
-}
 
-//修改管理员状态
-const handleStatusChange = (status, row) => {
-    row.statusLoading = true
-    updateManagerStatus(row.id, status)
-        .then(res => {
-            toast("修改状态成功")
-            row.status = status
-        })
-        .finally(() => {
-            row.statusLoading = false
-
-        })
-}
 
 
 
