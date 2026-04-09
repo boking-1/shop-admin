@@ -56,20 +56,19 @@ import { toast } from '~/composables/util'
 import { ref, reactive, computed } from 'vue'
 import { getNoticeList, createNotice, updateNotice, deleteNotice } from '~/api/notice'
 import FormDrawer from '~/components/FormDrawer.vue'
-
-//公告列表数据
-const tableData = ref([])
-//加载动画
-const loading = ref(false)
-//分页
-const currentPage = ref(1)
-const total = ref(0)
-const limit = ref(10)
-
+import { useInitTable } from '~/composables/useCommon'
+const {
+    tableData,
+    loading,
+    currentPage,
+    total,
+    limit,
+    getData
+} = useInitTable({
+    getList: getNoticeList,
+})
 //抽屉组件
 const formDrawerRef = ref(null)
-
-
 //表单
 const formRef = ref(null)
 const form = reactive({
@@ -93,7 +92,6 @@ const rules = {
         },
     ],
 }
-
 const editId = ref(0)//若为0，抽屉即为新增公告功能，若为公告id，即为修改功能
 const drawerTitle = computed(() => editId.value ? '修改公告' : '新增公告')
 //重置表单
@@ -150,24 +148,4 @@ const handleDelete = (id) => {
         })
         .finally(() => loading.value = true)
 }
-
-//获取数据
-const getData = (p = null) => {
-    if (typeof p == "number") {
-        currentPage.value = p
-    }
-    loading.value = true
-    getNoticeList(currentPage.value)
-        .then((res) => {
-            tableData.value = res.list
-            total.value = res.totalCount
-        })
-        .finally(() => loading.value = false)
-}
-getData()
-
-
-
-
-
 </script>

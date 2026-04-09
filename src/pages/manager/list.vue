@@ -119,23 +119,31 @@ import { ref, reactive, computed } from 'vue'
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
-//搜索
-const searchForm = reactive({
-    keyword: ""
+import { useInitTable } from '~/composables/useCommon'
+const roles = reactive([])
+const {
+    searchForm,
+    resetSearchForm,
+    tableData,
+    loading,
+    currentPage,
+    total,
+    limit,
+    getData
+} = useInitTable({
+    searchForm: {
+        keyword: ""
+    },
+    getList: getManagerList,
+    onGetListSuccess: (res) => {
+        roles.value = res.roles
+        tableData.value = res.list.map(o => {
+            o.statusLoading = false
+            return o
+        })
+    }
 })
-const resetSearchForm = () => {
-    searchForm.keyword = ""
-    getData()
-}
-//公告列表数据
-const tableData = ref([])
-const roles = ref([])
-//加载动画
-const loading = ref(false)
-//分页
-const currentPage = ref(1)
-const total = ref(0)
-const limit = ref(10)
+
 
 //抽屉组件
 const formDrawerRef = ref(null)
@@ -150,13 +158,7 @@ const form = reactive({
     status: 1,
     avatar: ""
 })
-//表单验证规则
-const rules = {
 
-}
-
-const editId = ref(0)//若为0，抽屉即为新增管理员功能，若为管理员id，即为修改功能
-const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
 //重置表单
 function resetForm(row = null) {
     if (formRef.value) {
@@ -167,6 +169,10 @@ function resetForm(row = null) {
             form[key] = row[key]
     }
 }
+
+const editId = ref(0)//若为0，抽屉即为新增管理员功能，若为管理员id，即为修改功能
+const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
+
 //新增管理员
 const handleCreate = () => {
     resetForm({
@@ -179,12 +185,14 @@ const handleCreate = () => {
     editId.value = 0
     formDrawerRef.value.open()
 }
+
 //修改管理员
 const handleUpdate = (row) => {
     editId.value = row.id
     resetForm(row)
     formDrawerRef.value.open()
 }
+
 //提交表单-新增或修改管理员
 const handleSubmit = () => {
     formRef.value.validate(valid => {
@@ -204,6 +212,7 @@ const handleSubmit = () => {
             })
     })
 }
+
 //删除管理员
 const handleDelete = (id) => {
     loading.value = true
@@ -214,25 +223,6 @@ const handleDelete = (id) => {
         })
         .finally(() => loading.value = true)
 }
-
-//获取数据
-const getData = (p = null) => {
-    if (typeof p == "number") {
-        currentPage.value = p
-    }
-    loading.value = true
-    getManagerList(currentPage.value, searchForm)
-        .then((res) => {
-            roles.value = res.roles
-            tableData.value = res.list.map(o => {
-                o.statusLoading = false
-                return o
-            })
-            total.value = res.totalCount
-        })
-        .finally(() => loading.value = false)
-}
-getData()
 
 //修改管理员状态
 const handleStatusChange = (status, row) => {
