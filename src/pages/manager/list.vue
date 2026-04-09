@@ -119,8 +119,9 @@ import { ref, reactive, computed } from 'vue'
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
-import { useInitTable } from '~/composables/useCommon'
-const roles = reactive([])
+import { useInitTable, useInitForm } from '~/composables/useCommon.js'
+const roles = ref([])
+//列表，分页，搜索
 const {
     searchForm,
     resetSearchForm,
@@ -143,75 +144,32 @@ const {
         })
     }
 })
-
-
-//抽屉组件
-const formDrawerRef = ref(null)
-
-
-//表单
-const formRef = ref(null)
-const form = reactive({
-    username: "",
-    password: "",
-    role_id: "null",
-    status: 1,
-    avatar: ""
-})
-
-//重置表单
-function resetForm(row = null) {
-    if (formRef.value) {
-        formRef.value.clearValidate()
-    }
-    if (row) {
-        for (const key in form)
-            form[key] = row[key]
-    }
-}
-
-const editId = ref(0)//若为0，抽屉即为新增管理员功能，若为管理员id，即为修改功能
-const drawerTitle = computed(() => editId.value ? '修改管理员' : '新增管理员')
-
-//新增管理员
-const handleCreate = () => {
-    resetForm({
+//新增，修改
+const {
+    formDrawerRef,
+    formRef,
+    form,
+    rules,
+    drawerTitle,
+    handleCreate,
+    handleSubmit,
+    handleUpdate
+} = useInitForm({
+    form:{
         username: "",
         password: "",
-        role_id: null,
+        role_id: "null",
         status: 1,
         avatar: ""
-    })
-    editId.value = 0
-    formDrawerRef.value.open()
-}
+    },
+    getData,
+    update:updateManager,
+    create:createManager,
 
-//修改管理员
-const handleUpdate = (row) => {
-    editId.value = row.id
-    resetForm(row)
-    formDrawerRef.value.open()
-}
+})
 
-//提交表单-新增或修改管理员
-const handleSubmit = () => {
-    formRef.value.validate(valid => {
-        if (!valid) return
-        formDrawerRef.value.showLoading()
-        console.log(editId.value);
 
-        const fun = editId.value ? updateManager(editId.value, form) : createManager(form)
-        fun.then(res => {
-            toast(editId.value ? "修改成功" : "新增成功")
-            //修改刷新当前页，新增刷新第一页
-            getData(editId.value ? false : 1)
-            formDrawerRef.value.close()
-        })
-            .finally(() => {
-                formDrawerRef.value.hideLoading()
-            })
-    })
-}
+
 
 //删除管理员
 const handleDelete = (id) => {
