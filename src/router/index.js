@@ -15,6 +15,7 @@ import NoticeList from '~/pages/notice/list.vue'
 import SettingBase from '~/pages/setting/base.vue'
 import CouponList from '~/pages/coupon/list.vue'
 import ManagerList from '~/pages/manager/list.vue'
+import Access from '~/pages/access/list.vue'
 
 //默认路由
 const routes = [
@@ -132,6 +133,15 @@ const asyncRoute = [
     ,
     meta: {
       title: "管理员管理"
+    }
+  },
+  {
+    path: '/access/list',
+    name: '/access/list',
+    component: Access
+    ,
+    meta: {
+      title: "权限管理"
     }
   },
 ]

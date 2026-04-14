@@ -21,16 +21,7 @@
 
 
             <!-- 新增|刷新 -->
-            <div class="flex items-center justify-between mb-4">
-                <el-button type="primary" size="small" @click="handleCreate">新增</el-button>
-                <el-tooltip content="刷新数据" placement="top" effect="dark">
-                    <el-button text @click="getData()">
-                        <el-icon size="20">
-                            <Refresh />
-                        </el-icon>
-                    </el-button>
-                </el-tooltip>
-            </div>
+            <ListHeader @create="handleCreate" @refresh="getData" />
 
             <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
 
@@ -119,6 +110,7 @@ import { getManagerList, updateManagerStatus, createManager, updateManager, dele
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
+import ListHeader from '~/components/ListHeader.vue'
 const roles = ref([])
 //列表，分页，搜索
 const {
