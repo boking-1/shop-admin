@@ -55,7 +55,7 @@
 </style>
 
 <script setup>
-import { useRouter,useRoute } from 'vue-router';
+import { useRouter,useRoute, onBeforeRouteUpdate } from 'vue-router';
 import {ref} from 'vue'
 import{useStore} from 'vuex'
 const router=useRouter()
@@ -66,4 +66,8 @@ const asideMenu = store.state.menus
 function handleSelect(e){
   router.push(e)
 }
+//监听路由变化，切换激活菜单
+onBeforeRouteUpdate((to,from)=>{
+defaultActive.value=to.path
+})
 </script>
