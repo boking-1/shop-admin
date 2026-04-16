@@ -21,7 +21,7 @@ const store = createStore({
         },
         toggleIsCollapse(state){
             state.isCollapse=!state.isCollapse
-            state.asideWidth=state.isCollapse ? "62.67px":"250px"
+            state.asideWidth=state.isCollapse ? "64px":"250px"
         },
         SET_MENUS(state,menus){
             state.menus=menus
