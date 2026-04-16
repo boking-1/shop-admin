@@ -38,7 +38,6 @@
         </div>
         <!-- 抽屉 -->
         <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
-
             <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
                 <el-form-item label="公告标题" prop="title">
                     <el-input v-model="form.title" placeholder="公告标题"></el-input>
