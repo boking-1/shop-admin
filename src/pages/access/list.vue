@@ -45,7 +45,7 @@
                 </el-form-item>
 
                 <el-form-item label="菜单图标" prop="icon" v-if="form.menu == 1">
-                    <el-input v-model="form.icon" placeholder="菜单图标"></el-input>
+                    <IconSelect v-model="form.icon"/>
                 </el-form-item>
                 <el-form-item label="前端路由" prop="frontpath" v-if="form.menu == 1 && form.rule_id > 0">
                     <el-input v-model="form.frontpath" placeholder="前端路由"></el-input>
@@ -73,6 +73,7 @@
 
 <script setup>
 import ListHeader from '~/components/ListHeader.vue';
+import IconSelect from '~/components/IconSelect.vue'
 import { getRuleList, updateRuleList, createRuleList } from '~/api/rule.js';
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import { ref } from 'vue'
