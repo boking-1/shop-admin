@@ -13,11 +13,20 @@
                     </el-icon>
                     <span>{{ data.name }}</span>
                     <div class="ml-auto">
-                        <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0">
+                        <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0"
+                            @change="handleStatusChange($event, data)">
                         </el-switch>
                         <el-button text type="primary" size="small" @click.stop="handleUpdate(data)">修改</el-button>
-                        <el-button text type="primary" size="small">增加</el-button>
-                        <el-button text type="primary" size="small">删除</el-button>
+                        <el-button text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
+                        <el-button text type="primary" size="small" @click.stop="handleDelete(data.id)">
+                            <el-popconfirm
+                                title="是否要删除此该记录?" confirm-button-text="确认" cancel-button-text="取消"
+                                @confirm="handleDelete(data.id)">
+                                <template #reference>
+                                    <el-button type="primary" size="small" text>删除</el-button>
+                                </template>
+                            </el-popconfirm>
+                        </el-button>
                     </div>
                 </div>
             </template>
@@ -45,7 +54,7 @@
                 </el-form-item>
 
                 <el-form-item label="菜单图标" prop="icon" v-if="form.menu == 1">
-                    <IconSelect v-model="form.icon"/>
+                    <IconSelect v-model="form.icon" />
                 </el-form-item>
                 <el-form-item label="前端路由" prop="frontpath" v-if="form.menu == 1 && form.rule_id > 0">
                     <el-input v-model="form.frontpath" placeholder="前端路由"></el-input>
@@ -74,16 +83,18 @@
 <script setup>
 import ListHeader from '~/components/ListHeader.vue';
 import IconSelect from '~/components/IconSelect.vue'
-import { getRuleList, updateRuleList, createRuleList } from '~/api/rule.js';
+import { getRuleList, updateRuleList, createRuleList, updateRuleStatus, deleteRule } from '~/api/rule.js';
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import { ref } from 'vue'
 import FormDrawer from '~/components/FormDrawer.vue'
 const options = ref([])
 const defaultExpendedKeys = ref([])
 const {
-    
+
     tableData,
     getData,
+    handleDelete,
+    handleStatusChange,
     loading
 } = useInitTable({
     getList: getRuleList,
@@ -91,7 +102,9 @@ const {
         options.value = res.rules
         tableData.value = res.list
         defaultExpendedKeys.value = res.list.map(o => o.id)
-    }
+    },
+    delete: deleteRule,
+    updateStatus: updateRuleStatus
 })
 const {
     formDrawerRef,
@@ -100,6 +113,7 @@ const {
     handleCreate,
     handleSubmit,
     handleUpdate,
+
     rules,
     drawerTitle
 } = useInitForm({
@@ -119,6 +133,12 @@ const {
 
 })
 
+const addChild = (id) => {
+    handleCreate()
+    form.rule_id = id
+    form.status = 1
+
+}
 </script>
 
 <style>
