@@ -16,6 +16,7 @@ import SettingBase from '~/pages/setting/base.vue'
 import CouponList from '~/pages/coupon/list.vue'
 import ManagerList from '~/pages/manager/list.vue'
 import Access from '~/pages/access/list.vue'
+import Role from '~/pages/role/list.vue'
 
 //默认路由
 const routes = [
@@ -144,6 +145,16 @@ const asyncRoute = [
       title: "权限管理"
     }
   },
+  {
+    path: '/role/list',
+    name: '/role/list',
+    component: Role
+    ,
+    meta: {
+      title: "角色管理"
+    }
+  },
+  
 ]
 
 //动态添加路由的方法
