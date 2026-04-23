@@ -18,13 +18,12 @@
                         </el-switch>
                         <el-button text type="primary" size="small" @click.stop="handleUpdate(data)">修改</el-button>
                         <el-button text type="primary" size="small" @click.stop="addChild(data.id)">增加</el-button>
-                            <el-popconfirm
-                                title="是否要删除此该记录?" confirm-button-text="确认" cancel-button-text="取消"
-                                @confirm="handleDelete(data.id)">
-                                <template #reference>
-                                    <el-button type="primary" size="small" text>删除</el-button>
-                                </template>
-                            </el-popconfirm>
+                        <el-popconfirm title="是否要删除此该记录?" confirm-button-text="确认" cancel-button-text="取消"
+                            @confirm="handleDelete(data.id)">
+                            <template #reference>
+                                <el-button type="primary" size="small" text>删除</el-button>
+                            </template>
+                        </el-popconfirm>
                     </div>
                 </div>
             </template>
@@ -74,6 +73,8 @@
                 </el-form-item>
             </el-form>
         </FormDrawer>
+
+        
     </div>
 
 </template>
@@ -137,6 +138,8 @@ const addChild = (id) => {
     form.status = 1
 
 }
+
+
 </script>
 
 <style>
