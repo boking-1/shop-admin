@@ -17,6 +17,8 @@ import CouponList from '~/pages/coupon/list.vue'
 import ManagerList from '~/pages/manager/list.vue'
 import Access from '~/pages/access/list.vue'
 import Role from '~/pages/role/list.vue'
+import Skus from '~/pages/skus/list.vue'
+
 
 //默认路由
 const routes = [
@@ -152,6 +154,15 @@ const asyncRoute = [
     ,
     meta: {
       title: "角色管理"
+    }
+  },
+  {
+    path: '/skus/list',
+    name: '/skus/list',
+    component: Skus
+    ,
+    meta: {
+      title: "规格管理"
     }
   },
   

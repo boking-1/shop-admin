@@ -31,7 +31,7 @@ export function useInitTable(opt = {}) {
         loading.value = true
         opt.getList(currentPage.value, searchForm)
             .then((res) => {
-                if (opt.onGetListSuccess && typeof opt.onGetListSuccess == 'function'){
+                if (opt.onGetListSuccess && typeof opt.onGetListSuccess == 'function') {
                     opt.onGetListSuccess(res)
                 }
                 else {
@@ -44,29 +44,53 @@ export function useInitTable(opt = {}) {
     getData()
 
     //删除管理员
-const handleDelete = (id) => {
-    loading.value = true
-    opt.delete(id)
-        .then(res => {
-            toast("删除成功")
-            getData()
-        })
-        .finally(() => loading.value = false)
-}
+    const handleDelete = (id) => {
+        loading.value = true
+        opt.delete(id)
+            .then(res => {
+                toast("删除成功")
+                getData()
+            })
+            .finally(() => loading.value = false)
+    }
 
-//修改管理员状态
-const handleStatusChange = (status, row) => {
-    row.statusLoading = true
-    
-    opt.updateStatus(row.id, status)
-        .then(res => {
-            toast("修改状态成功")
-            row.status = status
-        })
-        .finally(() => {
-            row.statusLoading = false
-        })
-}
+    //修改管理员状态
+    const handleStatusChange = (status, row) => {
+        row.statusLoading = true
+
+        opt.updateStatus(row.id, status)
+            .then(res => {
+                toast("修改状态成功")
+                row.status = status
+            })
+            .finally(() => {
+                row.statusLoading = false
+            })
+    }
+
+    //批量删除
+
+    const multipleTableRef = ref(null)//表格
+    const multiSelectionIds = ref([]) //多选选中ID
+    const handleSelectionChange = (e) => {
+        multiSelectionIds.value = e.map(o => o.id)
+    }
+    const multiSelectionDelete = () => {
+        loading.value = true
+        opt.delete(multiSelectionIds.value)
+            .then(() => {
+                toast("删除成功")
+                //清空选中
+                if (multipleTableRef.value) {
+                    multipleTableRef.value.clearSelection()
+                }
+                getData()
+
+            })
+            .finally(() => {
+                loading.value = false
+            })
+    }
     return {
         searchForm,
         resetSearchForm,
@@ -77,7 +101,10 @@ const handleStatusChange = (status, row) => {
         limit,
         getData,
         handleDelete,
-        handleStatusChange
+        handleStatusChange,
+        multipleTableRef,
+        handleSelectionChange,
+        multiSelectionDelete
     }
 }
 
