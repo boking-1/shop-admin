@@ -69,7 +69,6 @@ export function useInitTable(opt = {}) {
     }
 
     //批量删除
-
     const multipleTableRef = ref(null)//表格
     const multiSelectionIds = ref([]) //多选选中ID
     const handleSelectionChange = (e) => {
