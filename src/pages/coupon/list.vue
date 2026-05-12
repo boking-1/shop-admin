@@ -23,7 +23,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="statusText" label="状态"  />
+                <el-table-column prop="statusText" label="状态" />
                 <el-table-column label="优惠">
                     <template #default="{ row }">
                         {{ row.type ? "满减" : "折扣" }} {{ row.type ? ("￥" + row.value) : (row.value + "折") }}
@@ -35,12 +35,21 @@
 
                 <el-table-column label="操作" width="180" align="center">
                     <template #default="scope">
-                        <el-button type="primary" size="small" text @click="handleUpdate(scope.row)">修改</el-button>
 
-                        <el-popconfirm title="是否要删除此公告?" confirm-button-text="确认" cancel-button-text="取消"
-                            @confirm="handleDelete(scope.row.id)">
+                        <el-button v-if="scope.row.statusText == '未开始'" type="primary" size="small" text
+                            @click="handleUpdate(scope.row)">修改</el-button>
+
+                        <el-popconfirm v-if="scope.row.statusText != '领取中'" title="是否要删除该优惠券?" confirm-button-text="确认"
+                            cancel-button-text="取消" @confirm="handleDelete(scope.row.id)">
                             <template #reference>
                                 <el-button type="primary" size="small" text>删除</el-button>
+                            </template>
+                        </el-popconfirm>
+
+                        <el-popconfirm v-if="scope.row.statusText == '领取中'" title="是否让该优惠券失效?" confirm-button-text="确认"
+                            cancel-button-text="取消" @confirm="handleStatusChange(0,scope.row)">
+                            <template #reference>
+                                <el-button type="danger" size="small">失效</el-button>
                             </template>
                         </el-popconfirm>
                     </template>
@@ -55,12 +64,36 @@
         </div>
         <!-- 抽屉 -->
         <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
-            <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
-                <el-form-item label="公告标题" prop="title">
-                    <el-input v-model="form.title" placeholder="公告标题"></el-input>
+            <el-form :model="form" ref="formRef" :rules="rules" label-width="100px" :inline="false" size="default">
+                <el-form-item label="优惠券名称" prop="name" style="width: 50%;">
+                    <el-input v-model="form.name" placeholder="优惠券名称"></el-input>
                 </el-form-item>
-                <el-form-item label="公告内容" prop="content">
-                    <el-input v-model="form.content" placeholder="公告内容" type="textarea" :rows="5"></el-input>
+                <el-form-item label="类型" prop="type">
+                    <el-radio-group v-model="form.type" @change="">
+                        <el-radio :value="0">满减</el-radio>
+                        <el-radio :value="1">折扣</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="面值" prop="value" style="width: 50%;">
+                    <el-input v-model="form.value" placeholder="面值">
+                        <template #append>{{ form.type ? "折" : "元" }}</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="发行量" prop="total">
+                    <el-input-number v-model="form.total" :min="0" :max="10000"></el-input-number>
+                </el-form-item>
+                <el-form-item label="最低使用价格" prop="min_price">
+                    <el-input v-model="form.min_price" placeholder="最低使用价格" type="number"></el-input>
+                </el-form-item>
+                <el-form-item label="排序" prop="order">
+                    <el-input-number v-model="form.order" :min="0" :max="1000"></el-input-number>
+                </el-form-item>
+                <el-form-item label="活动时间">
+                    <el-date-picker v-model="timerange" type="datetimerange" range-separator="To"
+                        start-placeholder="开始时间" end-placeholder="结束时间" value-format="YYYY-MM-DD HH:mm:ss" />
+                </el-form-item>
+                <el-form-item label="描述" prop="desc">
+                    <el-input v-model="form.desc" placeholder="优惠券名称"></el-input>
                 </el-form-item>
             </el-form>
         </FormDrawer>
@@ -74,6 +107,17 @@ import { getCouponList, createCoupon, updateCoupon, deleteCoupon, updateCouponSt
 import FormDrawer from '~/components/FormDrawer.vue'
 import { useInitTable, useInitForm } from '~/composables/useCommon'
 
+const timerange = computed({
+    get() {
+        return form.start_time && form.end_time ? [form.start_time, form.end_time] : []
+    },
+    set(val) {
+        form.start_time = val[0]
+        form.end_time = val[1]
+
+    }
+})
+// 格式化优惠券状态
 const formatStatus = (row) => {
     let s = "领取中"
     let start_time = (new Date(row.start_time)).getTime()
@@ -82,7 +126,7 @@ const formatStatus = (row) => {
     if (start_time > now) {
         s = "未开始"
     }
-    else if (s = end_time < now) {
+    else if (end_time < now) {
         s = "已结束"
     }
     else if (row.status == 0) {
@@ -99,10 +143,12 @@ const {
     limit,
     getData,
     handleDelete,
+    handleStatusChange
 
 } = useInitTable({
     getList: getCouponList,
     delete: deleteCoupon,
+    updateStatus: updateCouponStatus,
     onGetListSuccess: (res) => {
         tableData.value = res.list.map(o => {
             o.statusText = formatStatus(o)
@@ -125,27 +171,26 @@ const {
     handleUpdate
 } = useInitForm({
     form: {
-        title: "",
-        content: ""
+        name: "",
+        type: 0,
+        value: 0,
+        total: 100,
+        min_price: 0,
+        start_time: null,
+        end_time: null,
+        order: 0
     },
     getData,
     update: updateCoupon,
     create: createCoupon,
-    rules: {
-        title: [
-            {
-                required: true,
-                message: '公告标题不能为空',
-                trigger: 'blur'
-            },
-        ],
-        content: [
-            {
-                required: true,
-                message: '公告内容不能为空',
-                trigger: 'blur'
-            },
-        ],
+    beforeSubmit: (f) => {
+        if (typeof f.start_time != "number") {
+            f.start_time = (new Date(f.start_time)).getTime()
+        }
+        if (typeof f.end_time != "number") {
+            f.end_time = (new Date(f.end_time)).getTime()
+        }
+        return f
     }
 })
 

@@ -1,15 +1,15 @@
 <template>
     <div class="flex">
         <div v-if="modelValue">
-        <el-image :src="modelValue" fit="cover" class="w-[100px] h-[100px] rounded border mr-2"></el-image>
-    </div>
-    <div class="choose-image-btn" @click="open">
-        <div>
-            <el-icon>
-                <Plus />
-            </el-icon>
+            <el-image :src="modelValue" fit="cover" class="w-[100px] h-[100px] rounded border mr-2"></el-image>
         </div>
-    </div>
+        <div class="choose-image-btn" @click="open">
+            <div>
+                <el-icon>
+                    <Plus />
+                </el-icon>
+            </div>
+        </div>
     </div>
     <el-dialog title="选择头像" v-model="dialogVisible" width="80%" top="5vh">
 
@@ -21,7 +21,7 @@
             </el-header>
             <el-container>
                 <image-aside ref="imageAsideRef" @select="handleAsideSelect" />
-                <image-main ref="imageMainRef" @choose="handleChoose" :openChoose="true"/>
+                <image-main ref="imageMainRef" @choose="handleChoose" :openChoose="true" />
             </el-container>
         </el-container>
 

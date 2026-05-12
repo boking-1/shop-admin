@@ -62,6 +62,7 @@ export function useInitTable(opt = {}) {
             .then(res => {
                 toast("修改状态成功")
                 row.status = status
+                getData()
             })
             .finally(() => {
                 row.statusLoading = false
@@ -150,7 +151,15 @@ export function useInitForm(opt = {}) {
         formRef.value.validate(valid => {
             if (!valid) return
             formDrawerRef.value.showLoading()
-            const fun = editId.value ? opt.update(editId.value, form) : opt.create(form)
+            let body = {}
+            if (opt.beforeSubmit && typeof opt.beforeSubmit == "function") {
+                body = opt.beforeSubmit({ ...form })
+            }
+            else {
+                body = form
+            }
+            
+            const fun = editId.value ? opt.update(editId.value, body) : opt.create(body)
             fun.then(res => {
                 toast(editId.value ? "修改成功" : "新增成功")
                 //修改刷新当前页，新增刷新第一页
