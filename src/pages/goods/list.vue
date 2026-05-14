@@ -10,16 +10,35 @@
             <!-- 搜索 -->
             <el-form :model="searchForm" label-width="80px" :inline="false" size="default">
                 <el-row :gutter="20">
+                    <!-- 搜索栏1 -->
                     <el-col :span="8" :offset="0">
-                        <el-form-item label="关键词">
+                        <el-form-item label="商品名称">
                             <el-input v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
                         </el-form-item>
                     </el-col>
+                    <!-- 搜索栏2 -->
+                    <el-col :span="8" :offset="0" v-if="showCategory">
+                        <el-form-item label="商品分类">
+                            <el-select v-model="searchForm.category_id" placeholder="商品分类" clearable>
+                                <el-option v-for="item in categoryList" :key="item.id" :label="item.name"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
 
-                    <el-col :span="8" :offset="8">
+                    <el-col :span="8" :offset="showCategory ? 0 : 8">
                         <div class="flex items-center justify-center">
                             <el-button type="primary" @click="getData">搜索</el-button>
                             <el-button @click="resetSearchForm">重置</el-button>
+                            <el-button type="primary" size="default" @click=" showCategory = !showCategory" text>
+                                {{ showCategory ? "收起" : "展开" }}
+                                <el-icon>
+                                    <ArrowUp v-if="showCategory" />
+                                    <ArrowDown v-else />
+                                </el-icon>
+                            </el-button>
+
                         </div>
                     </el-col>
                 </el-row>
@@ -70,13 +89,13 @@
                 <!-- 总库存 -->
                 <el-table-column label="总库存" width="90" prop="stock" align="center" />
                 <!-- 操作 -->
-                <el-table-column label="操作"  align="center">
-                    <template #default="{row}">
-                        <div v-if="searchForm.tab!='delete'">
-                            <el-button class="px-1" type="primary" size="small" text >修改</el-button>
+                <el-table-column label="操作" align="center">
+                    <template #default="{ row }">
+                        <div v-if="searchForm.tab != 'delete'">
+                            <el-button class="px-1" type="primary" size="small" text>修改</el-button>
                             <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
-                            <el-button class="px-1" type="primary" size="small" text >设置轮播图</el-button>
-                            <el-button class="px-1" type="primary" size="small" text >商品详情</el-button>
+                            <el-button class="px-1" type="primary" size="small" text>设置轮播图</el-button>
+                            <el-button class="px-1" type="primary" size="small" text>商品详情</el-button>
 
                             <el-popconfirm title="是否要删除此该商品?" confirm-button-text="确认" cancel-button-text="取消"
                                 @confirm="handleDelete(row.id)">
@@ -132,6 +151,8 @@ import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import ListHeader from '~/components/ListHeader.vue'
+import { getCategoryList } from '~/api/category'
+
 const roles = ref([])
 //列表，分页，搜索
 const {
@@ -149,7 +170,7 @@ const {
     searchForm: {
         tab: "all",
         title: "",
-        category_id:null
+        category_id: null
     },
     getList: getGoodsList,
     delete: deleteGoods,
@@ -215,7 +236,12 @@ const tabbars = [
     }
 ]
 
-
+//商品分类列表
+const categoryList = ref([])
+getCategoryList().then((res) => {
+    categoryList.value = res
+})
+const showCategory = ref(false)
 
 
 
