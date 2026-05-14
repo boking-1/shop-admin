@@ -26,9 +26,8 @@ export function showModal(content = "提示内容", type = "") {
 
 //提交内容弹出框
 
-export function showPrompt(tip,value='')
-{
-   return ElMessageBox.prompt(tip,'', {
+export function showPrompt(tip, value = '') {
+  return ElMessageBox.prompt(tip, '', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     inputValue: value,
@@ -44,4 +43,17 @@ export function showFullLoading() {
 //隐藏全局loding
 export function hideFullLoading() {
   nprogress.done()
+}
+
+//将query对象转化为url参数
+export function queryParams(query) {
+  let q = []
+  for (const key in query) {
+    if (query[key]) {
+      q.push(`${key}=${encodeURIComponent(query[key])}`)
+    }
+  }
+  let r = q.join("&")
+  r = r ? ("?" + r) : ""
+  return r
 }
