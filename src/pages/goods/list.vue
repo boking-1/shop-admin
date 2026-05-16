@@ -8,41 +8,21 @@
         </div>
         <el-card shadow="never" :body-style="{ padding: '20px' }">
             <!-- 搜索 -->
-            <el-form :model="searchForm" label-width="80px" :inline="false" size="default">
-                <el-row :gutter="20">
-                    <!-- 搜索栏1 -->
-                    <el-col :span="8" :offset="0">
-                        <el-form-item label="商品名称">
-                            <el-input v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <!-- 搜索栏2 -->
-                    <el-col :span="8" :offset="0" v-if="showCategory">
-                        <el-form-item label="商品分类">
-                            <el-select v-model="searchForm.category_id" placeholder="商品分类" clearable>
-                                <el-option v-for="item in categoryList" :key="item.id" :label="item.name"
-                                    :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
+            <Search :model="searchForm" @reset="resetSearchForm" @search="getData">
+                <SearchItem label="商品名称">
+                    <el-input v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
+                </SearchItem>
 
-                    <el-col :span="8" :offset="showCategory ? 0 : 8">
-                        <div class="flex items-center justify-center">
-                            <el-button type="primary" @click="getData">搜索</el-button>
-                            <el-button @click="resetSearchForm">重置</el-button>
-                            <el-button type="primary" size="default" @click=" showCategory = !showCategory" text>
-                                {{ showCategory ? "收起" : "展开" }}
-                                <el-icon>
-                                    <ArrowUp v-if="showCategory" />
-                                    <ArrowDown v-else />
-                                </el-icon>
-                            </el-button>
+                <template #show>
+                    <SearchItem label="商品分类">
+                        <el-select v-model="searchForm.category_id" placeholder="商品分类" clearable>
+                            <el-option v-for="item in categoryList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </SearchItem>
+                </template>
 
-                        </div>
-                    </el-col>
-                </el-row>
-            </el-form>
+            </Search>
 
 
             <!-- 新增|刷新 -->
@@ -57,6 +37,7 @@
                                 style="width:50px;height: 50px;"></el-image>
                             <div class="flex-1">
                                 <div>
+                                    <span>{{ row.title }}</span>
                                     <span class="text-rose-500">￥{{ row.min_price }}</span>
                                     <el-divider direction="vertical"></el-divider>
                                     <span class="text-gray-500">￥{{ row.min_oprice }}</span>
@@ -73,7 +54,7 @@
                 <el-table-column label="商品状态" width="100">
                     <template #default="{ row }">
                         <el-tag :type="row.status ? 'success' : 'danger'" size="small">{{ row.status ? '上架' : '仓库'
-                        }}</el-tag>
+                            }}</el-tag>
                     </template>
                 </el-table-column>
                 <!-- 审核状态 -->
@@ -149,9 +130,12 @@ import { ref } from 'vue'
 import { getGoodsList, updateGoodsStatus, createGoods, updateGoods, deleteGoods } from '~/api/goods'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
+import Search from '~/components/Search.vue'
+import SearchItem from '~/components/SearchItem.vue'
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import ListHeader from '~/components/ListHeader.vue'
 import { getCategoryList } from '~/api/category'
+import { get } from '@vueuse/core'
 
 const roles = ref([])
 //列表，分页，搜索
@@ -241,7 +225,6 @@ const categoryList = ref([])
 getCategoryList().then((res) => {
     categoryList.value = res
 })
-const showCategory = ref(false)
 
 
 

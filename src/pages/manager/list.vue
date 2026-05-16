@@ -2,22 +2,12 @@
     <div>
         <el-card shadow="never" :body-style="{ padding: '20px' }">
             <!-- 搜索 -->
-            <el-form :model="searchForm" label-width="80px" :inline="false" size="default">
-                <el-row :gutter="20">
-                    <el-col :span="8" :offset="0">
-                        <el-form-item label="关键词">
-                            <el-input v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
-                        </el-form-item>
-                    </el-col>
+            <Search :model="searchForm" @reset="resetSearchForm" @search="getData">
+                <SearchItem label="商品名称">
+                    <el-input v-model="searchForm.title" placeholder="商品名称" clearable></el-input>
+                </SearchItem>
+            </Search>
 
-                    <el-col :span="8" :offset="8">
-                        <div class="flex items-center justify-center">
-                            <el-button type="primary" @click="getData">搜索</el-button>
-                            <el-button @click="resetSearchForm">重置</el-button>
-                        </div>
-                    </el-col>
-                </el-row>
-            </el-form>
 
 
             <!-- 新增|刷新 -->
@@ -105,10 +95,12 @@
 </template>
 
 <script setup>
-import { ref} from 'vue'
+import { ref } from 'vue'
 import { getManagerList, updateManagerStatus, createManager, updateManager, deleteManager } from '~/api/manager'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
+import Search from '~/components/Search.vue'
+import SearchItem from '~/components/SearchItem.vue'
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import ListHeader from '~/components/ListHeader.vue'
 const roles = ref([])
@@ -129,8 +121,8 @@ const {
         keyword: ""
     },
     getList: getManagerList,
-    delete:deleteManager,
-    updateStatus:updateManagerStatus,
+    delete: deleteManager,
+    updateStatus: updateManagerStatus,
     onGetListSuccess: (res) => {
         roles.value = res.roles
         tableData.value = res.list.map(o => {
