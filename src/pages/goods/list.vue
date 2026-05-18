@@ -26,9 +26,14 @@
 
 
             <!-- 新增|刷新 -->
-            <ListHeader @create="handleCreate" @refresh="getData" />
+            <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData" @delete="multiSelectionDelete">
+                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(1)" v-if="searchForm.tab=='all'||searchForm.tab=='off'">上架</el-button>
+                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(0)" v-if="searchForm.tab=='all'||searchForm.tab=='saling'">下架</el-button>
+            </ListHeader>
 
-            <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
+            <el-table ref="multipleTableRef" :data="tableData" stripe style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55" />
+
                 <!-- 商品 -->
                 <el-table-column label="商品">
                     <template #default="{ row }">
@@ -100,6 +105,7 @@
         <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
 
             <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
+                
                 <el-form-item label="商品名称" prop="title">
                     <el-input v-model="form.title" placeholder="请输入商品名称,不能超过60个字符"></el-input>
                 </el-form-item>
@@ -178,7 +184,9 @@ const {
     limit,
     getData,
     handleDelete,
-    handleStatusChange
+    handleMultiStatusChange,
+    handleSelectionChange,
+    multiSelectionDelete
 } = useInitTable({
     searchForm: {
         tab: "all",

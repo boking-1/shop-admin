@@ -19,5 +19,7 @@ export function updateGoods(id, data) {
 }
 
 export function deleteGoods(ids) {
+    ids=!Array.isArray(ids)?[ids]:ids
+
     return axios.post(`admin/goods/delete_all`, { ids })
 }

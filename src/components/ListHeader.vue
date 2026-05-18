@@ -3,15 +3,15 @@
         <div>
             <el-button type="primary" v-if="btns.includes('create')" size="small"
                 @click="$emit('create')">新增</el-button>
-            <el-popconfirm title="是否要删除此规格?" confirm-button-text="确认" cancel-button-text="取消"
+            <el-popconfirm title="是否要批量删除?" confirm-button-text="确认" cancel-button-text="取消"
                 @confirm="$emit('delete')">
                 <template #reference>
-
                     <span class="ml-2">
                         <el-button type="danger" v-if="btns.includes('delete')" size="small">批量删除</el-button>
                     </span>
                 </template>
             </el-popconfirm>
+            <slot></slot>
         </div>
 
         <el-tooltip content="刷新数据" placement="top" effect="dark">
