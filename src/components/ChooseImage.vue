@@ -1,7 +1,19 @@
 <template>
     <div class="flex">
         <div v-if="modelValue">
-            <el-image :src="modelValue" fit="cover" class="w-[100px] h-[100px] rounded border mr-2"></el-image>
+            <el-image v-if="typeof modelValue == 'string'" :src="modelValue" fit="cover"
+                class="w-[100px] h-[100px] rounded border mr-2"></el-image>
+            <div v-else class="flex flex-wrap">
+                <div class="relative mx-1 mb-2 w-[100px] h-[100px] " v-for="(url, index) in modelValue" :key="index">
+
+                    <el-image :src="url" fit="cover" :lazy="true" class="w-[100px] h-[100px] rounded border mr-2"></el-image>
+                    <el-icon class="absolute right-[5px] top-[5px] cursor-pointer" style="z-index:10;"
+                        @click="removeImage(url)">
+                        <CircleClose />
+                    </el-icon>
+
+                </div>
+            </div>
         </div>
         <div class="choose-image-btn" @click="open">
             <div>
@@ -21,7 +33,7 @@
             </el-header>
             <el-container>
                 <image-aside ref="imageAsideRef" @select="handleAsideSelect" />
-                <image-main ref="imageMainRef" @choose="handleChoose" :openChoose="true" />
+                <image-main :limit="limit" ref="imageMainRef" @choose="handleChoose" :openChoose="true" />
             </el-container>
         </el-container>
 
@@ -39,6 +51,7 @@
 
 
 <script setup>
+import { toast } from '~/composables/util';
 import { ref } from 'vue';
 import imageAside from '~/components/imageAside.vue';
 import imageMain from '~/components/imageMain.vue';
@@ -64,7 +77,11 @@ const handleUploadFile = () => imageMainRef.value.openUpLoadFile()
 
 //选择头像
 const props = defineProps({
-    modelValue: [String, Array]
+    modelValue: [String, Array],
+    limit: {
+        type: Number,
+        default: 1
+    }
 })
 const emit = defineEmits(["update:modelValue"])
 let urls = []
@@ -73,11 +90,27 @@ const handleChoose = (e) => {
 }
 //提交
 const submit = () => {
-    if (urls.length) {
-        emit("update:modelValue", urls[0])
+    let value = []
+    if (props.limit == 1) {
+        value = urls[0]
+    } else {
+        value = [...props.modelValue, ...urls]
+        if (value.length > props.limit) {
+            toast("最多还能选择" + (value.length - props.limit) + "张")
+            return
+        }
     }
+    if (value) {
+        emit("update:modelValue", value)
+    }
+
     close()
 }
+//移除图片
+const removeImage = (url) => {
+    emit("update:modelValue", props.modelValue.filter(u => u!= url))
+}
+
 </script>
 <style>
 .choose-image-btn {

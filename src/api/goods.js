@@ -23,3 +23,11 @@ export function deleteGoods(ids) {
 
     return axios.post(`admin/goods/delete_all`, { ids })
 }
+
+export function readGoods(id) {
+    return axios.get(`admin/goods/read/${id}`)
+}
+
+export function setGoodsBanners(id,banners) {
+    return axios.post(`admin/goods/banners/${id}`,banners)
+}
