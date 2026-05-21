@@ -1,7 +1,9 @@
 <template>
     <editor v-model="content" tag-name="div" :init="init" />
+    <ChooseImage ref="chooseImageRef" :preview="false" :limit="9"></ChooseImage>
 </template>
 <script setup>
+import ChooseImage from "./ChooseImage.vue";
 import tinymce from "tinymce/tinymce";
 import Editor from "@tinymce/tinymce-vue";
 import { ref, watch } from "vue"
@@ -44,6 +46,7 @@ const props = defineProps({
     modelValue: String,
 })
 const emit = defineEmits(["update:modelValue"])
+const chooseImageRef = ref(null)
 // 配置
 const init = {
     language_url: '/tinymce/langs/zh-Hans.js', // 中文语言包路径
@@ -57,9 +60,22 @@ const init = {
     // height: 320,
     toolbar_mode: "none",
     plugins:
-        'wordcount visualchars visualblocks template searchreplace save quickbars preview pagebreak nonbreaking media insertdatetime importcss image  fullscreen directionality codesample code charmap link code table lists advlist anchor autolink autoresize autosave',
+        'wordcount visualchars visualblocks template searchreplace save quickbars preview pagebreak nonbreaking media insertdatetime importcss image  fullscreen directionality codesample code charmap link code table lists advlist anchor autolink autoresize autosave ',
     toolbar:
-        "formats undo redo fontsizeselect fontselect ltr rtl searchreplace media | outdent indent aligncenter alignleft alignright alignjustify lineheight underline quicklink h2 h3 blockquote numlist bullist table removeformat forecolor backcolor bold italic strikethrough hr link preview fullscreen help ",
+        "formats undo redo fontsizeselect fontselect ltr rtl searchreplace media  imageUpload| outdent indent aligncenter alignleft alignright alignjustify lineheight underline quicklink h2 h3 blockquote numlist bullist table removeformat forecolor backcolor bold italic strikethrough hr link preview fullscreen help ",
+    // 自定义按钮
+    setup: (editor) => {
+        editor.ui.registry.addButton('imageUpload', {
+            tooltip: '插入图片',
+            icon: 'image',
+            onAction: (e) => {
+                chooseImageRef.value.open((data) => { data.forEach(url => { editor.insertContent(`<img src=${url} style='width:100%';/>`) }) })
+            }
+
+        })
+
+
+    },
     content_style: "p {margin: 5px 0; font-size: 14px}",
     fontsize_formats: "12px 14px 16px 18px 24px 36px 48px 56px 72px",
     font_formats: "微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方= PingFang SC, Microsoft YaHei, sans- serif; 宋体 = simsun, serif; 仿宋体 = FangSong, serif; 黑体 = SimHei, sans - serif; Arial = arial, helvetica, sans - serif;Arial Black = arial black, avant garde;Book Antiqua = book antiqua, palatino; ",

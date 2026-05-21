@@ -1,12 +1,13 @@
 <template>
     <div class="flex">
-        <div v-if="modelValue">
+        <div v-if="modelValue && preview">
             <el-image v-if="typeof modelValue == 'string'" :src="modelValue" fit="cover"
                 class="w-[100px] h-[100px] rounded border mr-2"></el-image>
             <div v-else class="flex flex-wrap">
                 <div class="relative mx-1 mb-2 w-[100px] h-[100px] " v-for="(url, index) in modelValue" :key="index">
 
-                    <el-image :src="url" fit="cover" :lazy="true" class="w-[100px] h-[100px] rounded border mr-2"></el-image>
+                    <el-image :src="url" fit="cover" :lazy="true"
+                        class="w-[100px] h-[100px] rounded border mr-2"></el-image>
                     <el-icon class="absolute right-[5px] top-[5px] cursor-pointer" style="z-index:10;"
                         @click="removeImage(url)">
                         <CircleClose />
@@ -15,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div class="choose-image-btn" @click="open">
+        <div class="choose-image-btn" @click="open" v-if="preview">
             <div>
                 <el-icon>
                     <Plus />
@@ -57,7 +58,13 @@ import imageAside from '~/components/imageAside.vue';
 import imageMain from '~/components/imageMain.vue';
 //打开和关闭头像选择
 const dialogVisible = ref(false)
-const open = () => dialogVisible.value = true
+const callBackFunction = ref(null)
+const open = (callBack = null) => {
+    callBackFunction.value = callBack
+    dialogVisible.value = true
+
+}
+
 const close = () => dialogVisible.value = false
 
 
@@ -81,6 +88,10 @@ const props = defineProps({
     limit: {
         type: Number,
         default: 1
+    },
+    preview: {
+        type: Boolean,
+        default: true
     }
 })
 const emit = defineEmits(["update:modelValue"])
@@ -94,22 +105,27 @@ const submit = () => {
     if (props.limit == 1) {
         value = urls[0]
     } else {
-        value = [...props.modelValue, ...urls]
+        value = props.preview ? [...props.modelValue, ...urls] : [...urls]
         if (value.length > props.limit) {
             toast("最多还能选择" + (value.length - props.limit) + "张")
             return
         }
     }
-    if (value) {
+    if (value && props.preview) {
         emit("update:modelValue", value)
     }
-
+    if (!props.preview && typeof callBackFunction.value === 'function') {
+        callBackFunction.value(value)
+    }
     close()
 }
 //移除图片
 const removeImage = (url) => {
-    emit("update:modelValue", props.modelValue.filter(u => u!= url))
+    emit("update:modelValue", props.modelValue.filter(u => u != url))
 }
+defineExpose({
+    open
+})
 
 </script>
 <style>
