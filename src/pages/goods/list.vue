@@ -81,7 +81,7 @@
                             <el-button class="px-1" type="primary" size="small" text @click="handleUpdate(row)">修改</el-button>
                             <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
                             <el-button class="px-1" :type="row.goods_banner.length==0? 'danger':'primary'" size="small" @click="handleSetBanners(row)" :loading="row.bannersLoading"  text>设置轮播图</el-button>
-                            <el-button class="px-1" type="primary" size="small" text>商品详情</el-button>
+                            <el-button class="px-1" :type="row.content==null? 'danger':'primary'" size="small" text @click="handleSetContent(row)" :loading="row.contentLoading" >商品详情</el-button>
 
                             <el-popconfirm title="是否要删除此该商品?" confirm-button-text="确认" cancel-button-text="取消"
                                 @confirm="handleDelete(row.id)">
@@ -160,6 +160,8 @@
         </FormDrawer>
         <!-- 设置轮播图界面 -->
         <banners ref="bannersRef" @reLoadData="getData"></banners>
+        <content ref="contentRef" @reLoadData="getData"></content>
+
     </div>
 </template>
 
@@ -174,6 +176,8 @@ import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import ListHeader from '~/components/ListHeader.vue'
 import { getCategoryList } from '~/api/category'
 import banners from './banners.vue'
+import content from './content.vue'
+
 //列表，分页，搜索
 const {
     searchForm,
@@ -201,6 +205,7 @@ const {
         tableData.value = res.list.map(o => {
             o.statusLoading = false
             o.bannersLoading-false
+            o.contentLoading=false
             return o
         })
     }
@@ -272,9 +277,13 @@ getCategoryList().then((res) => {
 
 // 设置轮播图
 const bannersRef=ref(null)
-
 const handleSetBanners=(row)=>{
     bannersRef.value.open(row)
+}
+// 设置商品详情
+const contentRef=ref(null)
+const handleSetContent=(row)=>{
+    contentRef.value.open(row)
 }
 
 

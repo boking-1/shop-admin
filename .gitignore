@@ -37,3 +37,6 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# 忽略 tinymce 静态资源，不提交到 GitHub
+public/tinymce/
