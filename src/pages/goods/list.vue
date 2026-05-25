@@ -26,12 +26,16 @@
 
 
             <!-- 新增|刷新 -->
-            <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData" @delete="multiSelectionDelete">
-                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(1)" v-if="searchForm.tab=='all'||searchForm.tab=='off'">上架</el-button>
-                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(0)" v-if="searchForm.tab=='all'||searchForm.tab=='saling'">下架</el-button>
+            <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData"
+                @delete="multiSelectionDelete">
+                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(1)"
+                    v-if="searchForm.tab == 'all' || searchForm.tab == 'off'">上架</el-button>
+                <el-button class="ml-2" size="small" @click="handleMultiStatusChange(0)"
+                    v-if="searchForm.tab == 'all' || searchForm.tab == 'saling'">下架</el-button>
             </ListHeader>
 
-            <el-table ref="multipleTableRef" :data="tableData" stripe style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
+            <el-table ref="multipleTableRef" :data="tableData" stripe style="width: 100%" v-loading="loading"
+                @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" />
 
                 <!-- 商品 -->
@@ -59,7 +63,7 @@
                 <el-table-column label="商品状态" width="100">
                     <template #default="{ row }">
                         <el-tag :type="row.status ? 'success' : 'danger'" size="small">{{ row.status ? '上架' : '仓库'
-                        }}</el-tag>
+                            }}</el-tag>
                     </template>
                 </el-table-column>
                 <!-- 审核状态 -->
@@ -78,10 +82,13 @@
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
                         <div v-if="searchForm.tab != 'delete'">
-                            <el-button class="px-1" type="primary" size="small" text @click="handleUpdate(row)">修改</el-button>
-                            <el-button class="px-1" type="primary" size="small" text>商品规格</el-button>
-                            <el-button class="px-1" :type="row.goods_banner.length==0? 'danger':'primary'" size="small" @click="handleSetBanners(row)" :loading="row.bannersLoading"  text>设置轮播图</el-button>
-                            <el-button class="px-1" :type="row.content==null? 'danger':'primary'" size="small" text @click="handleSetContent(row)" :loading="row.contentLoading" >商品详情</el-button>
+                            <el-button class="px-1" type="primary" size="small" text
+                                @click="handleUpdate(row)">修改</el-button>
+                            <el-button class="px-1" type="primary" size="small" @click="handleSetSkus(row)" :loading="row.skusLoading" text>商品规格</el-button>
+                            <el-button class="px-1" :type="row.goods_banner.length == 0 ? 'danger' : 'primary'" size="small"
+                                @click="handleSetBanners(row)" :loading="row.bannersLoading" text>设置轮播图</el-button>
+                            <el-button class="px-1" :type="row.content == null ? 'danger' : 'primary'" size="small" text
+                                @click="handleSetContent(row)" :loading="row.contentLoading">商品详情</el-button>
 
                             <el-popconfirm title="是否要删除此该商品?" confirm-button-text="确认" cancel-button-text="取消"
                                 @confirm="handleDelete(row.id)">
@@ -105,7 +112,7 @@
         <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
 
             <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" size="default">
-                
+
                 <el-form-item label="商品名称" prop="title">
                     <el-input v-model="form.title" placeholder="请输入商品名称,不能超过60个字符"></el-input>
                 </el-form-item>
@@ -127,22 +134,22 @@
                     <el-input v-model="form.unit" placeholder="请输入单位" style="width: 50%"></el-input>
                 </el-form-item>
                 <el-form-item label="总库存" prop="stock">
-                    <el-input v-model="form.stock" type="number" >
+                    <el-input v-model="form.stock" type="number">
                         <template #append>件</template>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="库存预警" prop="min_stock">
-                    <el-input v-model="form.min_stock" type="number" >
+                    <el-input v-model="form.min_stock" type="number">
                         <template #append>件</template>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="最低销售价" prop="min_price">
-                    <el-input v-model="form.min_price" type="number" >
+                    <el-input v-model="form.min_price" type="number">
                         <template #append>元</template>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="最低原价" prop="min_oprice">
-                    <el-input v-model="form.min_oprice" type="number" >
+                    <el-input v-model="form.min_oprice" type="number">
                         <template #append>元</template>
                     </el-input>
                 </el-form-item>
@@ -150,7 +157,7 @@
                     <el-radio v-model="form.stock_display" label="0" @change="">隐藏</el-radio>
                     <el-radio v-model="form.stock_display" label="1" @change="">显示</el-radio>
 
-                    
+
                 </el-form-item>
                 <el-form-item label="是否上架" prop="status">
                     <el-radio v-model="form.status" label="0" @change="">放入仓库</el-radio>
@@ -160,8 +167,10 @@
         </FormDrawer>
         <!-- 设置轮播图界面 -->
         <banners ref="bannersRef" @reLoadData="getData"></banners>
+        <!-- 设置商品详情 -->
         <content ref="contentRef" @reLoadData="getData"></content>
-
+        <!-- 设置商品规格 -->
+         <skus ref="skusRef" @reLoadData="getData"></skus>
     </div>
 </template>
 
@@ -177,6 +186,7 @@ import ListHeader from '~/components/ListHeader.vue'
 import { getCategoryList } from '~/api/category'
 import banners from './banners.vue'
 import content from './content.vue'
+import skus from './skus.vue'
 
 //列表，分页，搜索
 const {
@@ -204,8 +214,9 @@ const {
     onGetListSuccess: (res) => {
         tableData.value = res.list.map(o => {
             o.statusLoading = false
-            o.bannersLoading-false
-            o.contentLoading=false
+            o.bannersLoading - false
+            o.contentLoading = false
+            o.skusLoading=false
             return o
         })
     }
@@ -276,16 +287,20 @@ getCategoryList().then((res) => {
 })
 
 // 设置轮播图
-const bannersRef=ref(null)
-const handleSetBanners=(row)=>{
+const bannersRef = ref(null)
+const handleSetBanners = (row) => {
     bannersRef.value.open(row)
 }
 // 设置商品详情
-const contentRef=ref(null)
-const handleSetContent=(row)=>{
+const contentRef = ref(null)
+const handleSetContent = (row) => {
     contentRef.value.open(row)
 }
-
+// 设置商品规格
+const skusRef=ref(null)
+const handleSetSkus=(row)=>{
+    skusRef.value.open(row)
+}
 
 
 
