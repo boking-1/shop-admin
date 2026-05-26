@@ -1,5 +1,7 @@
+import { fa } from 'element-plus/es/locale/index.mjs'
 import { ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard,deleteGoodsSkusCard } from '~/api/goods'
+import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard } from '~/api/goods'
+import { useArrayMoveUp, useArrayMoveDown } from '~/composables/util'
 // 当前商品id
 export const goodId = ref(0)
 
@@ -50,24 +52,46 @@ export function updateSkuCard(item) {
         "order": item.order,
         "type": 0
     })
-    .then(res=>{
-        item.name=item.text
-    })
-    .catch(err=>{
-        item.text=item.text
-    })
-    .finally(()=>
-    item.loading=false)
+        .then(res => {
+            item.name = item.text
+        })
+        .catch(err => {
+            item.text = item.text
+        })
+        .finally(() =>
+            item.loading = false)
 }
 
 //删除规格选项
-export function deleteSkusCard(id){
+export function deleteSkusCard(id) {
     deleteGoodsSkusCard(id)
-    .then(res=>{
-        let i=sku_card_list.value.findIndex(o=>o.id==id)
-        if(i!=-1)
-        {
-            sku_card_list.value.splice(i,1)
+        .then(res => {
+            let i = sku_card_list.value.findIndex(o => o.id == id)
+            if (i != -1) {
+                sku_card_list.value.splice(i, 1)
+            }
+        })
+}
+
+//排序规格选项
+export const bodyLoading = ref(false)
+export function sortCard(action, index) {
+    bodyLoading.value = true
+    let oList = JSON.parse(JSON.stringify(sku_card_list.value))
+    let func = (action == 'up') ? useArrayMoveUp : useArrayMoveDown
+    func(oList, index)
+    let sortData = oList.map((o, i) => {
+        return {
+            id: o.id,
+            order: i + 1
         }
     })
+    sortGoodsSkusCard({ "sortdata": sortData })
+        .then(res => {
+            func(sku_card_list.value, index)
+        })
+        .finally(() => {
+            bodyLoading.value = false
+        })
+
 }

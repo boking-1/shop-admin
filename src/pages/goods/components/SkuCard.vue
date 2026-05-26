@@ -1,5 +1,5 @@
 <template>
-    <el-form-item label="规格选项">
+    <el-form-item label="规格选项" v-loading="bodyLoading">
         <el-card shadow="never" class="w-full mb-3" v-for="(item, index) in sku_card_list" :key='item.id'" v-loading="item.loading">
             <template #header>
                 <div class=" flex items-center">
@@ -11,12 +11,12 @@
                             </el-icon>
                         </template>
                     </el-input>
-                    <el-button size="small" @click="" class="ml-auto">
+                    <el-button size="small" @click="sortCard('up',index)" class="ml-auto" :disabled="index==0">
                         <el-icon>
                             <Top />
                         </el-icon>
                     </el-button>
-                    <el-button size="small" @click="">
+                    <el-button size="small" @click="sortCard('down',index)" :disabled="index==(sku_card_list.length-1)"> 
                         <el-icon>
                             <Bottom />
                         </el-icon>
@@ -48,7 +48,7 @@
 
 <script setup>
 import SkuCardItem from './SkuCardItem.vue';
-import { sku_card_list, addSkusCardEvent, btnLoading, updateSkuCard, deleteSkusCard } from '~/composables/useSku.js'
+import { sku_card_list, addSkusCardEvent, btnLoading, updateSkuCard, deleteSkusCard,sortCard,bodyLoading } from '~/composables/useSku.js'
 </script>
 <style>
 .el-card__header {
