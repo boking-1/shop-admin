@@ -14,7 +14,7 @@
             </el-form-item>
 
             <!-- 单规格 -->
-            <template v-if=" form.sku_type == 0">
+            <template v-if="form.sku_type == 0">
                 <el-form-item label="市场价格">
                     <el-input v-model="form.sku_value.oprice" style="width:35%">
                         <template #append>元</template>
@@ -47,10 +47,10 @@
             </template>
 
             <!-- 多规格 -->
-            <template v-else>   
-
+            <template v-else>
+                <SkuCard></SkuCard>
             </template>
-           
+
         </el-form>
 
     </formDrawer>
@@ -67,6 +67,8 @@ import { ref, reactive } from 'vue'
 import { readGoods, updateGoodsSkus } from '~/api/goods.js'
 import { toast } from '~/composables/util'
 import FormDrawer from '~/components/FormDrawer.vue'
+import SkuCard from './components/SkuCard.vue'
+import { goodId, initSkuCardList } from '~/composables/useSku.js'
 const form = reactive({
     "sku_type": 0,
     "sku_value": {
@@ -79,7 +81,6 @@ const form = reactive({
 })
 const dialogVisible = ref(false)
 
-const goodId = ref(0)
 const formDrawerRef = ref(null)
 //打开设置抽屉
 const open = (row) => {
@@ -94,6 +95,8 @@ const open = (row) => {
             "weight": 0,
             "volume": 0
         }
+        initSkuCardList(res)
+
         formDrawerRef.value.open()
     })
         .finally(() => {
