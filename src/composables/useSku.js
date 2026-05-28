@@ -1,6 +1,5 @@
-import { fa } from 'element-plus/es/locale/index.mjs'
-import { ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard } from '~/api/goods'
+import { nextTick, ref } from 'vue'
+import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard, createGoodsSkusCardValue, updateGoodsSkusCardValue, deleteGoodsSkusCardValue } from '~/api/goods'
 import { useArrayMoveUp, useArrayMoveDown } from '~/composables/util'
 // 当前商品id
 export const goodId = ref(0)
@@ -95,3 +94,90 @@ export function sortCard(action, index) {
         })
 
 }
+
+//初始化规格选项的值
+export function initSkusCardItem(id) {
+    const item = sku_card_list.value.find(o => o.id == id)
+    const inputValue = ref('')
+    const inputVisible = ref(false)
+    const InputRef = ref(null)
+    const loading = ref(false)
+
+    //移除规格选项的值
+    const handleClose = (tag) => {
+        loading.value = true
+        deleteGoodsSkusCardValue(tag.id)
+            .then(res => {
+                let i = item.goodsSkusCardValue.findIndex(o => o.id == tag.id)
+                if (i != -1) {
+                    item.goodsSkusCardValue.splice(i, 1)
+                }
+            })
+            .finally(() => {
+                loading.value = false
+            })
+
+    }
+
+    const showInput = () => {
+        inputVisible.value = true
+        nextTick(() => {
+            InputRef.value.input.focus()
+        })
+    }
+    //添加规格选项的值
+    const handleInputConfirm = () => {
+        if (!inputValue.value) {
+            inputVisible.value = false
+            return
+        }
+        if (inputValue.value) {
+            loading.value = true
+            createGoodsSkusCardValue({
+                "goods_skus_card_id": id,
+                "name": item.name,
+                "order": 50,
+                "value": inputValue.value
+            })
+                .then(res => {
+                    item.goodsSkusCardValue.push({ ...res, text: res.value })
+                })
+                .finally(() => {
+                    inputVisible.value = false
+                    inputValue.value = ''
+                    loading.value = false
+                })
+
+        }
+
+    }
+    //修改规格选项的值
+    const handleChange = (value, tag) => {
+        loading.value = true
+        updateGoodsSkusCardValue(tag.id, {
+            "goods_skus_card_id": id,
+            "name": tag.name,
+            "order": tag.order,
+            "value": value
+        })
+            .then(res => {
+                tag.value = value
+            })
+            .finally(() => {
+                loading.value = false
+            })
+    }
+
+    return {
+        item,
+        inputVisible,
+        handleClose,
+        showInput,
+        handleInputConfirm,
+        InputRef,
+        inputValue,
+        loading,
+        handleChange
+    }
+}
+

@@ -36,7 +36,7 @@
 
                 </div>
             </template>
-            <SkuCardItem :skuItem="item.goodsSkusCardValue"></SkuCardItem>
+            <SkuCardItem :sku-card-id="item.id"></SkuCardItem>
         </el-card>
         <el-button type="success" size="small" @click="addSkusCardEvent" :loading="btnLoading">添加规格</el-button>
 

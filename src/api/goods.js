@@ -19,7 +19,7 @@ export function updateGoods(id, data) {
 }
 
 export function deleteGoods(ids) {
-    ids=!Array.isArray(ids)?[ids]:ids
+    ids = !Array.isArray(ids) ? [ids] : ids
 
     return axios.post(`admin/goods/delete_all`, { ids })
 }
@@ -28,8 +28,8 @@ export function readGoods(id) {
     return axios.get(`admin/goods/read/${id}`)
 }
 
-export function setGoodsBanners(id,banners) {
-    return axios.post(`admin/goods/banners/${id}`,banners)
+export function setGoodsBanners(id, banners) {
+    return axios.post(`admin/goods/banners/${id}`, banners)
 }
 
 export function updateGoodsSkus(id, data) {
@@ -40,7 +40,7 @@ export function createGoodsSkusCard(data) {
     return axios.post(`admin/goods_skus_card`, data)
 }
 
-export function updateGoodsSkusCard(id,data) {
+export function updateGoodsSkusCard(id, data) {
     return axios.post(`admin/goods_skus_card/${id}`, data)
 }
 
@@ -49,5 +49,16 @@ export function deleteGoodsSkusCard(id) {
 }
 
 export function sortGoodsSkusCard(data) {
-    return axios.post(`admin/goods_skus_card/sort`,data)
+    return axios.post(`admin/goods_skus_card/sort`, data)
+}
+
+export function createGoodsSkusCardValue(data) {
+    return axios.post(`admin/goods_skus_card_value`, data)
+}
+
+export function updateGoodsSkusCardValue(id, data) {
+    return axios.post(`admin/goods_skus_card_value/${id}`, data)
+}
+export function deleteGoodsSkusCardValue(id) {
+    return axios.post(`admin/goods_skus_card_value/${id}/delete`)
 }
