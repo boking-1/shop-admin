@@ -6,7 +6,7 @@
                     <el-input placeholder="规格名称" style="width: 200px;" v-model="item.text"
                         @change="updateSkuCard(item)">
                         <template #append>
-                            <el-icon>
+                            <el-icon @click="handleChooseSku" class="cursor-pointer">
                                 <More />
                             </el-icon>
                         </template>
@@ -42,13 +42,22 @@
 
     </el-form-item>
 
-
+    <!-- 规格选择弹框组件 -->
+     <ChooseSku ref="ChooseSkuRef"></ChooseSku>
 
 </template>
 
 <script setup>
+    import { ref } from 'vue';
 import SkuCardItem from './SkuCardItem.vue';
+import ChooseSku from '~/components/ChooseSku.vue';
 import { sku_card_list, addSkusCardEvent, btnLoading, updateSkuCard, deleteSkusCard,sortCard,bodyLoading } from '~/composables/useSku.js'
+
+const ChooseSkuRef=ref(null)
+const handleChooseSku=()=>{
+    ChooseSkuRef.value.open()
+}
+
 </script>
 <style>
 .el-card__header {
