@@ -1,5 +1,14 @@
 import { nextTick, ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard, createGoodsSkusCardValue, updateGoodsSkusCardValue, deleteGoodsSkusCardValue } from '~/api/goods'
+import {
+    createGoodsSkusCard,
+    updateGoodsSkusCard,
+    deleteGoodsSkusCard,
+    sortGoodsSkusCard,
+    createGoodsSkusCardValue,
+    updateGoodsSkusCardValue,
+    deleteGoodsSkusCardValue,
+    chooseSetGoodsSkusCard
+} from '~/api/goods'
 import { useArrayMoveUp, useArrayMoveDown } from '~/composables/util'
 // 当前商品id
 export const goodId = ref(0)
@@ -168,6 +177,7 @@ export function initSkusCardItem(id) {
             })
     }
 
+
     return {
         item,
         inputVisible,
@@ -177,7 +187,25 @@ export function initSkusCardItem(id) {
         InputRef,
         inputValue,
         loading,
-        handleChange
+        handleChange,
     }
+}
+
+// 选择设置规格的值
+export const handleChooseSetGoodsSkusCard = (id, data) => {
+    let item = sku_card_list.value.find(o => o.id == id)
+    item.loading = true
+
+    chooseSetGoodsSkusCard(id, data)
+        .then(res => {
+            item.name = item.text = res.goods_skus_card.name
+            item.goodsSkusCardValue = res.goods_skus_card_value.map(o => {
+                o.text = o.value || "属性值"
+                return o
+            })
+        })
+        .finally(() => {
+            item.loading = false
+        })
 }
 

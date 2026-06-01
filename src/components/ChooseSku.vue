@@ -17,7 +17,7 @@
             <el-main class="image-main">
                 <el-checkbox-group v-model="form.list" @change="">
                     <el-checkbox v-for="(item, index) in list" :key="index" :value="item" border>{{ item
-                    }}</el-checkbox>
+                        }}</el-checkbox>
                 </el-checkbox-group>
 
 
@@ -53,7 +53,7 @@ const {
     onGetListSuccess: res => {
         tableData.value = res.list
         total.value = res.totalCount
-        if (tableData.value.length>0) {
+        if (tableData.value.length > 0) {
             handleChangeActiveId(tableData.value[0].id)
         }
     }
@@ -61,7 +61,9 @@ const {
 const dialogVisible = ref(false)
 
 
-const open = () => {
+const callbackFunction = ref(null)
+const open = (callback = null) => {
+    callbackFunction.value = callback
     getData(1)
     dialogVisible.value = true
 }
@@ -70,6 +72,7 @@ const close = () => {
 }
 
 const form = reactive({
+    name: "",
     list: []
 })
 
@@ -80,10 +83,13 @@ function handleChangeActiveId(id) {
     list.value = []
     let item = tableData.value.find(o => o.id == id)
     list.value = item.default.split(",")
-
+    form.name = item.name
 }
 const submit = () => {
-
+    if (typeof callbackFunction.value === "function") {
+        callbackFunction.value(form)
+    }
+    dialogVisible.value = false
 }
 defineExpose({
     open

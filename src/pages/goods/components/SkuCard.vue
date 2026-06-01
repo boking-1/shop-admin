@@ -6,17 +6,18 @@
                     <el-input placeholder="规格名称" style="width: 200px;" v-model="item.text"
                         @change="updateSkuCard(item)">
                         <template #append>
-                            <el-icon @click="handleChooseSku" class="cursor-pointer">
+                            <el-icon @click="handleChooseSku(item)" class="cursor-pointer">
                                 <More />
                             </el-icon>
                         </template>
                     </el-input>
-                    <el-button size="small" @click="sortCard('up',index)" class="ml-auto" :disabled="index==0">
+                    <el-button size="small" @click="sortCard('up', index)" class="ml-auto" :disabled="index == 0">
                         <el-icon>
                             <Top />
                         </el-icon>
                     </el-button>
-                    <el-button size="small" @click="sortCard('down',index)" :disabled="index==(sku_card_list.length-1)"> 
+                    <el-button size="small" @click="sortCard('down', index)"
+                        :disabled="index == (sku_card_list.length - 1)">
                         <el-icon>
                             <Bottom />
                         </el-icon>
@@ -43,19 +44,24 @@
     </el-form-item>
 
     <!-- 规格选择弹框组件 -->
-     <ChooseSku ref="ChooseSkuRef"></ChooseSku>
+    <ChooseSku ref="ChooseSkuRef"></ChooseSku>
 
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+import { ref } from 'vue';
 import SkuCardItem from './SkuCardItem.vue';
 import ChooseSku from '~/components/ChooseSku.vue';
-import { sku_card_list, addSkusCardEvent, btnLoading, updateSkuCard, deleteSkusCard,sortCard,bodyLoading } from '~/composables/useSku.js'
+import { sku_card_list, addSkusCardEvent, btnLoading, updateSkuCard, deleteSkusCard, sortCard, bodyLoading, handleChooseSetGoodsSkusCard } from '~/composables/useSku.js'
 
-const ChooseSkuRef=ref(null)
-const handleChooseSku=()=>{
-    ChooseSkuRef.value.open()
+const ChooseSkuRef = ref(null)
+const handleChooseSku = (item) => {
+    ChooseSkuRef.value.open((value) => {
+        handleChooseSetGoodsSkusCard(item.id, {
+            name: value.name,
+            value: value.list
+        })
+    })
 }
 
 </script>
