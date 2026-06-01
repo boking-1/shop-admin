@@ -49,6 +49,7 @@
             <!-- 多规格 -->
             <template v-else>
                 <SkuCard></SkuCard>
+                <SkuTable></SkuTable>
             </template>
 
         </el-form>
@@ -68,6 +69,8 @@ import { readGoods, updateGoodsSkus } from '~/api/goods.js'
 import { toast } from '~/composables/util'
 import FormDrawer from '~/components/FormDrawer.vue'
 import SkuCard from './components/SkuCard.vue'
+import SkuTable from './components/SkuTable.vue'
+
 import { goodId, initSkuCardList } from '~/composables/useSku.js'
 const form = reactive({
     "sku_type": 0,
