@@ -305,7 +305,7 @@ function getTableData() {
         sku_list.value = []
         sku_list.value = arr.map(skus => {
 
-            let o = getBeforeSkuItem(skus, beforeSkuList)
+            let o = getBeforeSkuItem(JSON.parse(JSON.stringify(skus)), beforeSkuList)
             return {
                 code: o?.code || "",
                 cprice: o?.cprice || "0.00",
