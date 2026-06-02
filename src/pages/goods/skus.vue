@@ -71,7 +71,7 @@ import FormDrawer from '~/components/FormDrawer.vue'
 import SkuCard from './components/SkuCard.vue'
 import SkuTable from './components/SkuTable.vue'
 
-import { goodId, initSkuCardList } from '~/composables/useSku.js'
+import { goodId, initSkuCardList,sku_list } from '~/composables/useSku.js'
 const form = reactive({
     "sku_type": 0,
     "sku_value": {
@@ -111,7 +111,17 @@ const emit = defineEmits(["reLoadData"])
 //提交
 const onSubmit = () => {
     formDrawerRef.value.showLoading()
-    updateGoodsSkus(goodId.value, form).then(res => {
+    let data = {
+        sku_type: form.sku_type,
+        sku_value: form.sku_value
+    }
+    console.log(sku_list.value);
+    
+    if (form.sku_type == 1) {
+        data.goodsSkus = sku_list.value
+    }
+
+    updateGoodsSkus(goodId.value, data).then(res => {
         toast("设置商品规格成功")
         formDrawerRef.value.close()
         emit("reLoadData")

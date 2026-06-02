@@ -63,7 +63,7 @@
                 <el-table-column label="商品状态" width="100">
                     <template #default="{ row }">
                         <el-tag :type="row.status ? 'success' : 'danger'" size="small">{{ row.status ? '上架' : '仓库'
-                            }}</el-tag>
+                        }}</el-tag>
                     </template>
                 </el-table-column>
                 <!-- 审核状态 -->
@@ -84,9 +84,14 @@
                         <div v-if="searchForm.tab != 'delete'">
                             <el-button class="px-1" type="primary" size="small" text
                                 @click="handleUpdate(row)">修改</el-button>
-                            <el-button class="px-1" type="primary" size="small" @click="handleSetSkus(row)" :loading="row.skusLoading" text>商品规格</el-button>
-                            <el-button class="px-1" :type="row.goods_banner.length == 0 ? 'danger' : 'primary'" size="small"
-                                @click="handleSetBanners(row)" :loading="row.bannersLoading" text>设置轮播图</el-button>
+                            <el-button class="px-1"  size="small" @click="handleSetSkus(row)"
+                                :loading="row.skusLoading" text
+                                :type="(row.sku_type == 0 && !row.sku_value) || (row.sku_type == 1 && !row.goods_skus.length) ? 'danger' : 'primary'">
+                                商品规格
+                            </el-button>
+                            <el-button class="px-1" :type="row.goods_banner.length == 0 ? 'danger' : 'primary'"
+                                size="small" @click="handleSetBanners(row)" :loading="row.bannersLoading"
+                                text>设置轮播图</el-button>
                             <el-button class="px-1" :type="row.content == null ? 'danger' : 'primary'" size="small" text
                                 @click="handleSetContent(row)" :loading="row.contentLoading">商品详情</el-button>
 
@@ -170,7 +175,7 @@
         <!-- 设置商品详情 -->
         <content ref="contentRef" @reLoadData="getData"></content>
         <!-- 设置商品规格 -->
-         <skus ref="skusRef" @reLoadData="getData"></skus>
+        <skus ref="skusRef" @reLoadData="getData"></skus>
     </div>
 </template>
 
@@ -216,7 +221,7 @@ const {
             o.statusLoading = false
             o.bannersLoading - false
             o.contentLoading = false
-            o.skusLoading=false
+            o.skusLoading = false
             return o
         })
     }
@@ -297,8 +302,8 @@ const handleSetContent = (row) => {
     contentRef.value.open(row)
 }
 // 设置商品规格
-const skusRef=ref(null)
-const handleSetSkus=(row)=>{
+const skusRef = ref(null)
+const handleSetSkus = (row) => {
     skusRef.value.open(row)
 }
 
