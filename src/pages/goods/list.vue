@@ -26,10 +26,22 @@
 
 
             <!-- 新增|刷新 -->
-            <ListHeader layout="create,delete,refresh" @create="handleCreate" @refresh="getData"
-                @delete="multiSelectionDelete">
+            <ListHeader layout="create,refresh" @create="handleCreate" @refresh="getData">
+
+                <el-button class="ml-2" size="small" @click="multiSelectionDelete" v-if="searchForm.tab != 'delete'"
+                    type="danger">批量删除</el-button>
+                <el-button class="ml-2" size="small" @click="handleRestoreGoods" v-else type="warning">批量恢复</el-button>
+                <el-popconfirm title="是否要彻底删除此该商品?" confirm-button-text="确认" cancel-button-text="取消"
+                    @confirm="handleDestoryGoods" v-if="searchForm.tab == 'delete'">
+                    <template #reference>
+                        <el-button class="ml-2" size="small" type="danger"
+                            >彻底删除</el-button>
+                    </template>
+                </el-popconfirm>
+
                 <el-button class="ml-2" size="small" @click="handleMultiStatusChange(1)"
                     v-if="searchForm.tab == 'all' || searchForm.tab == 'off'">上架</el-button>
+
                 <el-button class="ml-2" size="small" @click="handleMultiStatusChange(0)"
                     v-if="searchForm.tab == 'all' || searchForm.tab == 'saling'">下架</el-button>
             </ListHeader>
@@ -58,7 +70,7 @@
                     </template>
                 </el-table-column>
                 <!-- 实际销量 -->
-                <el-table-column label="实际销量" width="70" prop="sale_count" align="center" />
+                <el-table-column label="实际销量" width="80" prop="sale_count" align="center" />
                 <!-- 商品状态 -->
                 <el-table-column label="商品状态" width="100">
                     <template #default="{ row }">
@@ -84,8 +96,8 @@
                         <div v-if="searchForm.tab != 'delete'">
                             <el-button class="px-1" type="primary" size="small" text
                                 @click="handleUpdate(row)">修改</el-button>
-                            <el-button class="px-1"  size="small" @click="handleSetSkus(row)"
-                                :loading="row.skusLoading" text
+                            <el-button class="px-1" size="small" @click="handleSetSkus(row)" :loading="row.skusLoading"
+                                text
                                 :type="(row.sku_type == 0 && !row.sku_value) || (row.sku_type == 1 && !row.goods_skus.length) ? 'danger' : 'primary'">
                                 商品规格
                             </el-button>
@@ -181,7 +193,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { getGoodsList, updateGoodsStatus, createGoods, updateGoods, deleteGoods } from '~/api/goods'
+import { getGoodsList, updateGoodsStatus, createGoods, updateGoods, deleteGoods, restoreGoods, destoryGoods } from '~/api/goods'
 import FormDrawer from '~/components/FormDrawer.vue'
 import ChooseImage from '~/components/ChooseImage.vue'
 import Search from '~/components/Search.vue'
@@ -192,6 +204,7 @@ import { getCategoryList } from '~/api/category'
 import banners from './banners.vue'
 import content from './content.vue'
 import skus from './skus.vue'
+import { toast } from '~/composables/util.js'
 
 //列表，分页，搜索
 const {
@@ -206,7 +219,9 @@ const {
     handleDelete,
     handleMultiStatusChange,
     handleSelectionChange,
-    multiSelectionDelete
+    multiSelectionDelete,
+    multipleTableRef,
+    multiSelectionIds
 } = useInitTable({
     searchForm: {
         tab: "all",
@@ -306,9 +321,32 @@ const skusRef = ref(null)
 const handleSetSkus = (row) => {
     skusRef.value.open(row)
 }
+//批量恢复
+const handleRestoreGoods = () => {
+    useMultiAction(restoreGoods, "恢复")
+}
 
+//彻底删除
+const handleDestoryGoods = () => {
+    useMultiAction(destoryGoods, "彻底删除")
+}
 
-
+// 批量操作:恢复或彻底删除
+function useMultiAction(func, msg) {
+    loading.value = true
+    func(multiSelectionIds.value)
+        .then(res => {
+            toast(msg + "成功")
+            //清空选中
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
+            getData()
+        })
+        .finally(() => {
+            loading.value = false
+        })
+}
 
 
 </script>

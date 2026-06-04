@@ -292,6 +292,8 @@ function getTableData() {
         }
 
         let arr = cartesianProductOf(...list)
+            console.log(arr);
+
 
         //获取之前的规格列表，将规格ID排序后转化为字符串
         let beforeSkuList = JSON.parse(JSON.stringify(sku_list.value)).map(o => {
@@ -304,7 +306,7 @@ function getTableData() {
 
         sku_list.value = []
         sku_list.value = arr.map(skus => {
-
+            
             let o = getBeforeSkuItem(JSON.parse(JSON.stringify(skus)), beforeSkuList)
             return {
                 code: o?.code || "",
