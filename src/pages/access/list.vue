@@ -127,6 +127,7 @@ const {
         icon: '',
         frontpath: ''
     },
+    getData,
     update: updateRuleList,
     create: createRuleList
 
