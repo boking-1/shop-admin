@@ -12,7 +12,7 @@
                     </el-icon>
                     <span>{{ data.name }}</span>
                     <div class="ml-auto">
-                        <el-button text type="primary" size="small" @click.stop="">推荐产品</el-button>
+                        <el-button text type="primary" size="small" @click.stop="openGoodsDrawer(data)" :loading="data.goodsDrawerLoading">推荐产品</el-button>
 
                         <el-switch :modelValue="data.status" :active-value="1" :inactive-value="0"
                             @change="handleStatusChange($event, data)">
@@ -42,7 +42,7 @@
             </el-form>
         </FormDrawer>
 
-
+        <GoodsDrawer ref="goodsDrawerRef"></GoodsDrawer>
     </div>
 
 </template>
@@ -52,6 +52,8 @@ import ListHeader from '~/components/ListHeader.vue';
 import { updateCategoryStatus, getCategoryList,updateCategory,createCategory,deleteCategory } from '~/api/category.js';
 import { useInitTable, useInitForm } from '~/composables/useCommon.js'
 import FormDrawer from '~/components/FormDrawer.vue'
+import GoodsDrawer from './components/GoodsDrawer.vue';
+import { ref } from 'vue';
 const {
 
     tableData,
@@ -62,7 +64,10 @@ const {
 } = useInitTable({
     getList: getCategoryList,
     onGetListSuccess: (res) => {
-        tableData.value = res
+        tableData.value = res.map(o=>{
+            o.goodsDrawerLoading=false
+            return o
+        })
     },
     delete:deleteCategory,
     updateStatus: updateCategoryStatus
@@ -86,7 +91,10 @@ const {
 
 })
 
-
+const goodsDrawerRef=ref(null)
+const openGoodsDrawer=(item)=>{
+    goodsDrawerRef.value.open(item)
+}
 
 
 </script>
