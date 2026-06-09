@@ -129,6 +129,7 @@ const {
             o.statusLoading = false
             return o
         })
+        total.value=res.totalCount
     }
 })
 //新增，修改
