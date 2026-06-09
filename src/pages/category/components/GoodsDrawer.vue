@@ -1,6 +1,6 @@
 <template>
 
-    <FormDrawer ref="formDrawerRef" title="推荐商品">
+    <FormDrawer ref="formDrawerRef" title="推荐商品" confirmText="关联" @submit="handleSubmit">
 
         <el-table :data="tableData" border stripe style="width: 100%;">
             <el-table-column align="center" prop="goods_id" label="ID" width="60" />
@@ -14,7 +14,8 @@
             <el-table-column align="center" prop="name" label="商品名称" width="180" />
             <el-table-column align="center" label="操作">
                 <template #default="{ row }">
-                    <el-button type="primary" size="small" text @click="handleDelete(row)" :loading="row.loading">删除</el-button>
+                    <el-button type="primary" size="small" text @click="handleDelete(row)"
+                        :loading="row.loading">删除</el-button>
 
                 </template>
             </el-table-column>
@@ -22,14 +23,16 @@
         </el-table>
 
     </FormDrawer>
+    <ChooseGoods ref="chooseGoodsRef"></ChooseGoods>
 
 </template>
 
 <script setup>
 import FormDrawer from '~/components/FormDrawer.vue';
 import { ref } from 'vue';
-import { getCategoryGoodsList,deleteCategoryGoods } from '~/api/category';
+import { getCategoryGoodsList, deleteCategoryGoods,connectCategoryGoods } from '~/api/category';
 import { toast } from '~/composables/util';
+import ChooseGoods from '~/components/ChooseGoods.vue';
 const formDrawerRef = ref(null)
 const category_id = ref(0)
 const tableData = ref([])
@@ -47,21 +50,41 @@ const open = (item) => {
 function getData() {
     return getCategoryGoodsList(category_id.value)
         .then(res => {
-            tableData.value = res.map(o=>{
-                o.loading=false
+            tableData.value = res.map(o => {
+                o.loading = false
                 return o
             })
         })
 }
 
-const handleDelete=(row)=>{
-    row.loading=true
+const handleDelete = (row) => {
+    row.loading = true
     deleteCategoryGoods(row.id)
-    .then(res=>{
-        toast("删除成功")
-        getData()
+        .then(res => {
+            toast("删除成功")
+            getData()
+        })
+        .finally(() => row.loading = false)
+}
+
+const chooseGoodsRef = ref(null)
+
+const handleSubmit = () => {
+    chooseGoodsRef.value.open((goods_ids) => {
+        formDrawerRef.value.showLoading()
+        connectCategoryGoods({
+            category_id: category_id.value,
+            goods_ids
+        })
+            .then(res => {
+                toast("关联成功")
+                getData()
+            })
+            .finally(()=>{
+        formDrawerRef.value.hideLoading()
+
+            })
     })
-    .finally(()=>row.loading=false)
 }
 
 defineExpose({

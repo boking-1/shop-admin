@@ -239,6 +239,8 @@ const {
             o.skusLoading = false
             return o
         })
+        total.value=res.totalCount
+        
     }
 })
 //新增，修改
