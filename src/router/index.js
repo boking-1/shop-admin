@@ -18,6 +18,7 @@ import ManagerList from '~/pages/manager/list.vue'
 import Access from '~/pages/access/list.vue'
 import Role from '~/pages/role/list.vue'
 import Skus from '~/pages/skus/list.vue'
+import Level from '~/pages/level/list.vue'
 
 
 //默认路由
@@ -163,6 +164,15 @@ const asyncRoute = [
     ,
     meta: {
       title: "规格管理"
+    }
+  },
+  {
+    path: '/level/list',
+    name: '/level/list',
+    component: Level
+    ,
+    meta: {
+      title: "会员等级"
     }
   },
   
