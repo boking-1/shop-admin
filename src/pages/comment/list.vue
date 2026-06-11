@@ -9,17 +9,19 @@
             </Search>
 
 
-            <el-table default-expand-all :data="tableData" stripe style="width: 100%" v-loading="loading">
+            <el-table row-key="id" :expand-row-keys="expandedKeys" @expand-change="handleExpandChange" :data="tableData"
+                stripe style="width: 100%" v-loading="loading">
 
                 <el-table-column type="expand">
-                    <template #default="{ row }" >
-                        <div class="flex pl-18" >
+                    <template #default="{ row }">
+                        <div class="flex pl-18">
                             <el-avatar :size="50" :src="row.user.avatar" fit="cover" class="mr-3"></el-avatar>
                             <div class="flex-1">
                                 <h6 class="flex items-center">
                                     {{ row.user.nickname || row.user.username }}
                                     <small class="text-gray-400 ml-2">{{ row.review_time }}</small>
-                                    <el-button v-if="!row.textareaEdit && !row.extra" class="ml-auto" size="small" @click="openTextArea(row)">回复</el-button>
+                                    <el-button v-if="!row.textareaEdit && !row.extra" class="ml-auto" size="small"
+                                        @click="openTextArea(row)">回复</el-button>
                                 </h6>
                                 {{ row.review.data }}
                                 <div class="py-2">
@@ -27,25 +29,27 @@
                                         fit="cover" :lazy="true" style="width: 100px; height: 100px;"
                                         class="rounded"></el-image>
                                 </div>
-                                
+
                                 <div v-if="row.textareaEdit">
                                     <el-input v-model="textarea" placeholder="请输入评价内容" type="textarea" clearable
                                         :row="2"></el-input>
                                     <div class="py-2">
                                         <el-button type="primary" size="small" @click="review(row)">回复</el-button>
-                                        <el-button size="small" class="ml-2" @click="row.textareaEdit=false">取消</el-button>
+                                        <el-button size="small" class="ml-2"
+                                            @click="row.textareaEdit = false">取消</el-button>
                                     </div>
                                 </div>
 
                                 <template v-else>
                                     <div class="mt-3 bg-gray-100 p-3 rounded" v-for="(item, index) in row.extra"
-                                    :key="index">
-                                    <h6 class="flex font-bold">
-                                        客服
-                                        <el-button type="info" size="small"  class="ml-auto" @click="openTextArea(row,item.data)">修改</el-button>
-                                    </h6>
-                                    <p>{{ item.data }}</p>
-                                </div>
+                                        :key="index">
+                                        <h6 class="flex font-bold">
+                                            客服
+                                            <el-button type="info" size="small" class="ml-auto"
+                                                @click="openTextArea(row, item.data)">修改</el-button>
+                                        </h6>
+                                        <p>{{ item.data }}</p>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -105,7 +109,7 @@
 <script setup>
 import { toast } from '~/composables/util'
 import { ref } from 'vue'
-import { getGoodsCommentList, updateGoodsCommentStatus,reviewGoodsComment } from '~/api/goods_comment'
+import { getGoodsCommentList, updateGoodsCommentStatus, reviewGoodsComment } from '~/api/goods_comment'
 import Search from '~/components/Search.vue'
 import SearchItem from '~/components/SearchItem.vue'
 import { useInitTable } from '~/composables/useCommon.js'
@@ -139,21 +143,30 @@ const {
     }
 })
 
+const expandedKeys = ref([])
+
 const textarea = ref("")
-const openTextArea = (row,data="") => {
+const openTextArea = (row, data = "") => {
+    if (!expandedKeys.value.includes(row.id)) {
+        expandedKeys.value.push(row.id)
+    }
     textarea.value = data
     row.textareaEdit = true
 }
 const review = (row) => {
-    if(textarea.value=="")
-{
-    return toast("回复内容不能为空","error")
+    if (textarea.value == "") {
+        return toast("回复内容不能为空", "error")
+    }
+    reviewGoodsComment(row.id, textarea.value)
+        .then(res => {
+            row.textareaEdit = false
+            toast("回复成功")
+            getData()
+                
+        })
 }
-reviewGoodsComment(row.id,textarea.value)
-.then(res=>{
-    row.textareaEdit=false
-    toast("回复成功")
-    getData()
-})
+
+const handleExpandChange = (row, expandedRows) => {
+    expandedKeys.value = expandedRows.map(item => item.id)
 }
 </script>
