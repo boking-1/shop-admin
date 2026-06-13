@@ -3,8 +3,7 @@
         <div>
             <el-button type="primary" v-if="btns.includes('create')" size="small"
                 @click="$emit('create')">新增</el-button>
-            <el-popconfirm title="是否要批量删除?" confirm-button-text="确认" cancel-button-text="取消"
-                @confirm="$emit('delete')">
+            <el-popconfirm title="是否要批量删除?" confirm-button-text="确认" cancel-button-text="取消" @confirm="$emit('delete')">
                 <template #reference>
                     <span class="ml-2">
                         <el-button type="danger" v-if="btns.includes('delete')" size="small">批量删除</el-button>
@@ -13,17 +12,27 @@
             </el-popconfirm>
             <slot></slot>
         </div>
+        <div>
+            <el-tooltip content="刷新数据" placement="top" effect="dark">
+                <span>
+                    <el-button v-if="btns.includes('refresh')" text @click="$emit('refresh')">
+                        <el-icon size="20">
+                            <Refresh />
+                        </el-icon>
+                    </el-button>
+                </span>
+            </el-tooltip>
+            <el-tooltip content="导出数据" placement="top" effect="dark">
+                <span>
+                    <el-button v-if="btns.includes('download')" text @click="$emit('download')">
+                        <el-icon size="20">
+                            <Download />
+                        </el-icon>
+                    </el-button>
+                </span>
+            </el-tooltip>
+        </div>
 
-        <el-tooltip content="刷新数据" placement="top" effect="dark">
-            <span>
-                <el-button v-if="btns.includes('refresh')" text @click="$emit('refresh')">
-                    <el-icon size="20">
-                        <Refresh />
-                    </el-icon>
-                </el-button>
-            </span>
-
-        </el-tooltip>
     </div>
 </template>
 
@@ -36,7 +45,7 @@ const props = defineProps({
     }
 })
 const btns = computed(() => props.layout.split(","))
-const emit = defineEmits(["create", "refresh", "delete"])
+const emit = defineEmits(["create", "refresh", "delete", "download"])
 
 
 </script>

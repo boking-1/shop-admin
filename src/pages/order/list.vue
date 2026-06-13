@@ -36,8 +36,8 @@
             </Search>
 
 
-            <!-- 新增|刷新 -->
-            <ListHeader layout="refresh" @refresh="getData">
+            <!-- 刷新|导出数据 -->
+            <ListHeader layout="refresh,download" @refresh="getData" @download="handleDownLoad">
 
                 <el-button class="ml-2" size="small" @click="multiSelectionDelete" type="danger">
                     批量删除
@@ -126,6 +126,8 @@
             <el-pagination background layout="prev, pager,next" :total="total" :current-page="currentPage"
                 :page-size="limit" @current-change="getData" />
         </div>
+        <exportExcel :tabs="tabbars" ref="exportExcelRef"></exportExcel>
+
     </div>
 </template>
 
@@ -138,6 +140,7 @@ import { useInitTable } from '~/composables/useCommon.js'
 import ListHeader from '~/components/ListHeader.vue'
 import { getCategoryList } from '~/api/category'
 import { toast } from '~/composables/util.js'
+import exportExcel from './exportExcel.vue'
 
 //列表，分页，搜索
 const {
@@ -216,10 +219,10 @@ const categoryList = ref([])
 getCategoryList().then((res) => {
     categoryList.value = res
 })
-
-//彻底删除
-const handleDestoryGoods = () => {
-    useMultiAction(destoryGoods, "彻底删除")
+//导出数据
+const exportExcelRef = ref(null)
+const handleDownLoad = () => {
+    exportExcelRef.value.open()
 }
 
 // 批量操作:恢复或彻底删除
