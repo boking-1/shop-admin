@@ -64,7 +64,7 @@
                         <div class="flex" v-for="(item, index) in row.order_items" :key="index">
                             <el-image :src="item.goods_item ? item.goods_item.cover : ''" fit="cover" :lazy="true"
                                 style="width: 30px;height: 30px;"></el-image>
-                            <p class=" text-blue-500 ml-2">
+                            <p class=" ml-2" :class="item.goods_item ? 'text-blue-500' : 'text-red-500'">
                                 {{ item.goods_item ? item.goods_item.title : '商品已被删除' }}
                             </p>
                         </div>
@@ -105,7 +105,8 @@
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
                         <div v-if="searchForm.tab != 'delete'">
-                            <el-button class="px-1" type="primary" size="small" text @click="">订单详情</el-button>
+                            <el-button class="px-1" type="primary" size="small" text
+                                @click="openInfoModal(row)">订单详情</el-button>
                             <el-button v-if="searchForm.tab == 'noship'" class="px-1" type="primary" size="small" text
                                 @click="">订单发货</el-button>
                             <el-button v-if="searchForm.tab == 'refunding'" class="px-1" type="primary" size="small"
@@ -127,7 +128,7 @@
                 :page-size="limit" @current-change="getData" />
         </div>
         <exportExcel :tabs="tabbars" ref="exportExcelRef"></exportExcel>
-
+        <infoModal ref="infoModalRef"></infoModal>
     </div>
 </template>
 
@@ -141,6 +142,7 @@ import ListHeader from '~/components/ListHeader.vue'
 import { getCategoryList } from '~/api/category'
 import { toast } from '~/composables/util.js'
 import exportExcel from './exportExcel.vue'
+import infoModal from './infoModal.vue'
 
 //列表，分页，搜索
 const {
@@ -201,6 +203,11 @@ const tabbars = [
         name: "代收货"
     },
     {
+        key: "received",
+        name: "已收货"
+    },
+
+    {
         key: "finish",
         name: "已完成"
     },
@@ -224,6 +231,13 @@ const exportExcelRef = ref(null)
 const handleDownLoad = () => {
     exportExcelRef.value.open()
 }
+
+//订单详情
+const infoModalRef = ref(null)
+const openInfoModal = (row) => {
+    infoModalRef.value.open(row)
+}
+
 
 // 批量操作:恢复或彻底删除
 function useMultiAction(func, msg) {
