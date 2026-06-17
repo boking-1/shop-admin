@@ -31,6 +31,9 @@
                 </el-form-item>
                 <el-form-item label="运单号">
                     {{ info.ship_data.express_no }}
+                    <el-button type="primary" text size="small" @click="openShipInfoModal(info.id)" class="ml-2"
+                        :loading="loading">查看物流</el-button>
+
                 </el-form-item>
                 <el-form-item label="发货时间">
                     {{ ship_time }}
@@ -96,12 +99,14 @@
         </el-card>
 
     </el-drawer>
+    <shipInfoModal ref="shipInfoModalRef"></shipInfoModal>
 
 </template>
 
 <script setup>
 import { useDateFormat } from '@vueuse/core';
 import { computed, ref } from 'vue';
+import shipInfoModal from './shipInfoModal.vue';
 
 const dialogVisible = ref(false)
 const info = ref({})
@@ -142,6 +147,16 @@ const refund_status = computed(() => {
     }
     return info.value.refund_status ? opt[info.value.refund_status] : ""
 })
+
+//查看物流信息
+const shipInfoModalRef = ref(null)
+const loading = ref(false)
+const openShipInfoModal = (id) => {
+    loading.value = true
+    shipInfoModalRef.value.open(id)
+        .finally(() => loading.value = false)
+}
+
 
 defineExpose({
     open,
