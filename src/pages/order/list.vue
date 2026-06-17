@@ -110,9 +110,9 @@
                             <el-button v-if="searchForm.tab == 'noship'" class="px-1" type="primary" size="small" text
                                 @click="">订单发货</el-button>
                             <el-button v-if="searchForm.tab == 'refunding'" class="px-1" type="primary" size="small"
-                                text @click="">同意退款</el-button>
+                                text @click="handleRefund(row.id, 1)">同意退款</el-button>
                             <el-button v-if="searchForm.tab == 'refunding'" class="px-1" type="primary" size="small"
-                                text @click="">拒绝退款</el-button>
+                                text @click="handleRefund(row.id, 0)">拒绝退款</el-button>
 
 
                         </div>
@@ -143,6 +143,8 @@ import { getCategoryList } from '~/api/category'
 import { toast } from '~/composables/util.js'
 import exportExcel from './exportExcel.vue'
 import infoModal from './infoModal.vue'
+import { showModal, showPrompt } from '~/composables/util.js'
+import { refundOrder } from '~/api/order.js'
 
 //列表，分页，搜索
 const {
@@ -255,6 +257,22 @@ function useMultiAction(func, msg) {
             loading.value = false
         })
 }
+//同意或拒绝退款
+const handleRefund = (id, agree) => {
+    (agree ? showModal("是否同意该订单退款?") : showPrompt("请输入拒绝退款理由"))
+        .then(({ value }) => {
+            let data = { agree }
+            if (!agree) {
+                data.disagree_reason = value
+            }
+            refundOrder(id, data)
+                .then(res => {
+                    getData()
+                    toast("操作成功")
+                }
+                )
 
+        })
+}
 
 </script>

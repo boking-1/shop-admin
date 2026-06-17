@@ -23,4 +23,6 @@ export function getShipInfo(id) {
     return axios.get(`admin/order/${id}/get_ship_info`)
 }
 
-
+export function refundOrder(id, data) {
+    return axios.post(`admin/order/${id}/handle_refund`, data)
+}
