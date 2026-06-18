@@ -19,6 +19,7 @@ import Access from '~/pages/access/list.vue'
 import Role from '~/pages/role/list.vue'
 import Skus from '~/pages/skus/list.vue'
 import Level from '~/pages/level/list.vue'
+import settingBuy from '~/pages/setting/buy.vue'
 
 
 //默认路由
@@ -175,7 +176,17 @@ const asyncRoute = [
       title: "会员等级"
     }
   },
-  
+  {
+    path: '/setting/buy',
+    name: '/setting/buy',
+
+    component: settingBuy
+    ,
+    meta: {
+      title: "交易设置"
+    }
+  },
+
 ]
 
 //动态添加路由的方法
