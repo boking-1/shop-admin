@@ -24,7 +24,7 @@
                         </el-table-column>
                     </el-table>
 
-                    <el-form-item>
+                    <el-form-item class="mt-2">
                         <el-button type="primary" @click="submit">保存</el-button>
                         <el-button>取消</el-button>
                     </el-form-item>
@@ -51,13 +51,12 @@
                 </el-form-item>
             </el-form>
 
-            <el-form :model="form" label-width="80px" v-else>
+            <el-form :model="form" label-width="100px" v-else>
                 <el-form-item label="公众号 APPID">
                     <el-input v-model="form.wxpay.app_id" placeholder="app_id" style="width: 90%;"></el-input>
                 </el-form-item>
                 <el-form-item label="小程序 APPID">
-                    <el-input v-model="form.wxpay.miniapp_id" placeholder="miniapp_id" style="width: 90%;"
-                        type="textarea" :rows="4"></el-input>
+                    <el-input v-model="form.wxpay.miniapp_id" placeholder="miniapp_id" style="width: 90%;"></el-input>
                 </el-form-item>
                 <el-form-item label="小程序 secret">
                     <el-input v-model="form.wxpay.secret" placeholder="secret" style="width: 90%;"></el-input>
@@ -72,7 +71,7 @@
                     <el-input v-model="form.wxpay.key" placeholder="key" style="width: 90%;"></el-input>
                 </el-form-item>
                 <el-form-item label="cert_client">
-                    <el-upload action="uploadAction" :headers="{ token }" :limit="1" accept=".pem"
+                    <el-upload :action="uploadAction" :headers="{ token }" :limit="1" accept=".pem"
                         :on-success="uploadClientSuccess">
                         <el-button type="primary">点击上传</el-button>
                         <template #tip>
@@ -83,7 +82,7 @@
                 </el-form-item>
 
                 <el-form-item label="cert_key">
-                    <el-upload action="uploadAction" :headers="{ token }" :limit="1" accept=".pem"
+                    <el-upload :action="uploadAction" :headers="{ token }" :limit="1" accept=".pem"
                         :on-success="uploadkeySuccess">
                         <el-button type="primary">点击上传</el-button>
                         <template #tip>
@@ -182,7 +181,6 @@ const submit = () => {
     loading.value = true
     setSysconfig({
         ...form,
-        password_encrypt: form.password_encrypt.join(",")
     })
         .then(res => {
             toast("修改成功")
