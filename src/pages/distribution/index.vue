@@ -27,8 +27,8 @@
                         </el-date-picker>
                     </SearchItem>
                     <SearchItem label="关键词">
-                    <el-input v-model="searchForm.keyword" placeholder="关键词" clearable></el-input>
-                </SearchItem>
+                        <el-input v-model="searchForm.keyword" placeholder="关键词" clearable></el-input>
+                    </SearchItem>
                 </template>
             </Search>
 
@@ -62,14 +62,24 @@
 
                 <el-table-column label="操作" width="180" align="center" fixed="right">
                     <template #default="{ row }">
-                        <el-button type="primary" size="small" text @click="">推广人</el-button>
-                        <el-button type="primary" size="small" text @click="">推广订单</el-button>
+                        <el-button type="primary" size="small" text
+                            @click="openDataDrawer(row.id, 'user')">推广人</el-button>
+                        <el-button type="primary" size="small" text
+                            @click="openDataDrawer(row.id, 'order')">推广订单</el-button>
                     </template>
                 </el-table-column>
 
             </el-table>
+            <!-- 分页 -->
+            <div class=" flex items-center justify-center mt-3 ">
+                <el-pagination background layout="prev, pager,next" :total="total" :current-page="currentPage"
+                    :page-size="limit" @current-change="getData" />
+            </div>
 
         </el-card>
+        <dataDrawer ref="dataDrawerRef"></dataDrawer>
+        <dataDrawer ref="orderDataDrawerRef" type="order"></dataDrawer>
+
     </div>
 </template>
 
@@ -80,6 +90,7 @@ import { getAgentList } from '~/api/distribution'
 import Search from '~/components/Search.vue'
 import SearchItem from '~/components/SearchItem.vue'
 import { useInitTable } from '~/composables/useCommon.js'
+import dataDrawer from './dataDrawer.vue';
 //列表，分页，搜索
 const {
     searchForm,
@@ -108,5 +119,12 @@ const {
         total.value = res.totalCount
     }
 })
+
+const dataDrawerRef = ref(null)
+const orderDataDrawerRef = ref(null)
+
+const openDataDrawer = (id, type) => {
+    (type == "user" ? dataDrawerRef : orderDataDrawerRef).value.open(id)
+}
 
 </script>
