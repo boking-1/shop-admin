@@ -43,7 +43,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   transition: all 0.3s;
-  @apply shadow-md fixed;
+  @apply shadow-md fixed bg-white;
 
 }
 

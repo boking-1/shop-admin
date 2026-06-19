@@ -21,6 +21,7 @@ import Skus from '~/pages/skus/list.vue'
 import Level from '~/pages/level/list.vue'
 import settingBuy from '~/pages/setting/buy.vue'
 import settingShip from '~/pages/setting/ship.vue'
+import DistributionIndex from '~/pages/distribution/index.vue'
 
 
 
@@ -196,6 +197,16 @@ const asyncRoute = [
     ,
     meta: {
       title: "物流设置"
+    }
+  },
+  {
+    path: '/distribution/index',
+    name: '/distribution/index',
+
+    component: DistributionIndex
+    ,
+    meta: {
+      title: "分销员管理"
     }
   },
 ]
