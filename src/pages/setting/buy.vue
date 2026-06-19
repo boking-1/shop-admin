@@ -24,17 +24,60 @@
                         </el-table-column>
                     </el-table>
 
-                    <el-form-item class="mt-2">
-                        <el-button type="primary" @click="submit">保存</el-button>
-                        <el-button>取消</el-button>
-                    </el-form-item>
+
                 </el-tab-pane>
 
                 <el-tab-pane label="购物设置" name="second">
+                    <el-form-item label="未支付订单" label-width="90px">
+                        <div>
+                            <el-input v-model="form.close_order_minute" placeholder="未支付订单" type="number">
+                                <template #append>
+                                    分钟后自动关闭
+                                </template>
+                            </el-input>
+                            <small class="text-gray-500 flex ml-2">
+                                订单下单未付款，n分钟后自动关闭，设置0不自动关闭
+                            </small>
+                        </div>
+
+                    </el-form-item>
+
+                    <el-form-item label="已发货订单" label-width="90px">
+                        <div>
+                            <el-input v-model="form.auto_received_day" placeholder="已发货订单" type="number">
+                                <template #append>
+                                    天后自动收货
+                                </template>
+                            </el-input>
+                            <small class="text-gray-500 flex ml-2">
+                                如果在期间未确认收货，系统自动完成收获，设置0不自动收货
+                            </small>
+                        </div>
+
+                    </el-form-item>
+
+                    <el-form-item label="已完成订单" label-width="90px">
+                        <div>
+                            <el-input v-model="form.after_sale_day" placeholder="已完成订单" type="number">
+                                <template #append>
+                                    天内允许申请售后
+                                </template>
+                            </el-input>
+                            <small class="text-gray-500 flex ml-2">
+                                订单完成后，用户在天内可以发起售后申请，设置0不允许申请售后
+                            </small>
+                        </div>
+
+                    </el-form-item>
+
+                    <el-form-item class="mt-2">
+                        <el-button type="primary" @click="submit">保存</el-button>
+                    </el-form-item>
 
                 </el-tab-pane>
             </el-tabs>
         </el-form>
+
 
         <FormDrawer ref="formDrawerRef" title="配置" @submit="submit">
             <el-form :model="form" label-width="80px" v-if="drawerType == 'alipay'">
@@ -92,9 +135,6 @@
                     </el-upload>
                 </el-form-item>
             </el-form>
-
-
-
         </FormDrawer>
     </div>
 </template>
