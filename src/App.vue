@@ -1,4 +1,7 @@
-<script setup></script>
+<script setup>
+console.log(import.meta.env);
+
+</script>
 
 <template>
     <router-view></router-view>
