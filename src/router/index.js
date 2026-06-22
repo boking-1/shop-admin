@@ -22,6 +22,8 @@ import Level from '~/pages/level/list.vue'
 import settingBuy from '~/pages/setting/buy.vue'
 import settingShip from '~/pages/setting/ship.vue'
 import DistributionIndex from '~/pages/distribution/index.vue'
+import DistributionSetting from '~/pages/distribution/setting.vue'
+
 
 
 
@@ -207,6 +209,16 @@ const asyncRoute = [
     ,
     meta: {
       title: "分销员管理"
+    }
+  },
+  {
+    path: '/distribution/setting',
+    name: '/distribution/setting',
+
+    component: DistributionSetting
+    ,
+    meta: {
+      title: "分销设置"
     }
   },
 ]
